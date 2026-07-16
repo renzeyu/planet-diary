@@ -37,7 +37,7 @@
     frontier: "#c79bf2"
   };
   const validViews = new Set(["detail", "gallery", "list", "map"]);
-  const validSortFields = new Set(["number", "name", "date", "arm", "system", "world", "habitability"]);
+  const validSortFields = new Set(["number", "name", "date", "arm", "system", "world", "habitability", "synopsis"]);
   const url = new URL(window.location.href);
   const storedLanguage = (() => {
     try {
@@ -375,8 +375,8 @@
     return `./?${parameters.toString()}`;
   }
 
-  function defaultSortDirection(field) {
-    return ["number", "date"].includes(field) ? "desc" : "asc";
+  function defaultSortDirection() {
+    return "asc";
   }
 
   function sortFieldLabel(field) {
@@ -387,7 +387,8 @@
       arm: "spiralArm",
       system: "system",
       world: "world",
-      habitability: "hab"
+      habitability: "hab",
+      synopsis: "synopsis"
     };
     return t(keys[field] || "catalog");
   }
@@ -400,6 +401,7 @@
     if (field === "system") return definitionLabel("systems", entry.systemId, state.language);
     if (field === "world") return definitionLabel("planetClasses", entry.planetClassId, state.language);
     if (field === "habitability") return entry.habitability || "";
+    if (field === "synopsis") return entryTagline(entry);
     return entry.number;
   }
 
@@ -595,13 +597,13 @@
     if (update) updateUrl();
   }
 
-  function propertyEntries(entry) {
+  function propertyEntries(entry, { includeSynopsis = true } = {}) {
     const habitability = definitionItem("habitability", entry.habitability);
     const themes = (entry.themeIds || []).map((id) => bilingualLabel("themes", id)).join(" · ");
     const mapPosition = entry.map
       ? escapeHtml(`X ${Number(entry.map.x).toFixed(3)} · Y ${Number(entry.map.y).toFixed(3)}`)
       : "—";
-    return [
+    const properties = [
       [t("catalog"), `#${entry.number}`],
       [t("created"), displayDate(entry.date)],
       [t("spiralArm"), bilingualLabel("arms", entry.armId)],
@@ -616,13 +618,14 @@
       [t("biosphere"), bilingualLabel("biospheres", entry.biosphereId)],
       [t("civilization"), bilingualLabel("civilizations", entry.civilizationId)],
       [t("climate"), bilingualLabel("climates", entry.climateId)],
-      [t("themes"), themes],
-      [t("synopsis"), escapeHtml(entryTagline(entry) || "—")]
+      [t("themes"), themes]
     ];
+    if (includeSynopsis) properties.push([t("synopsis"), escapeHtml(entryTagline(entry) || "—")]);
+    return properties;
   }
 
-  function propertyList(entry) {
-    return propertyEntries(entry).map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${value}</dd>`).join("");
+  function propertyList(entry, options) {
+    return propertyEntries(entry, options).map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${value}</dd>`).join("");
   }
 
   function detailImages(entry) {
@@ -674,7 +677,7 @@
       <article class="planet-detail-card" id="planet-${escapeHtml(entry.id)}" data-planet-id="${escapeHtml(entry.id)}">
         <header class="planet-detail-meta">
           <h2 lang="${languageAttribute()}"><span>#${entry.number}</span>${name}</h2>
-          <dl class="planet-property-list">${propertyList(entry)}</dl>
+          <dl class="planet-property-list">${propertyList(entry, { includeSynopsis: false })}</dl>
         </header>
         ${detailImages(entry)}
         <div class="planet-detail-copy" lang="${languageAttribute()}">
@@ -802,6 +805,7 @@
         ${header("system", "planet-table-system", t("system"))}
         ${header("world", "planet-table-class", t("world"))}
         ${header("habitability", "planet-table-habitability", t("hab"))}
+        ${header("synopsis", "planet-table-synopsis", t("synopsis"))}
       </div>
     `;
   }
@@ -816,6 +820,7 @@
         <span class="planet-table-system" role="cell">${escapeHtml(definitionLabel("systems", entry.systemId, state.language))}</span>
         <span class="planet-table-class" role="cell">${escapeHtml(definitionLabel("planetClasses", entry.planetClassId, state.language))}</span>
         <span class="planet-table-habitability" role="cell">${escapeHtml(entry.habitability)}</span>
+        <span class="planet-table-synopsis" role="cell" lang="${languageAttribute()}">${escapeHtml(entryTagline(entry) || "—")}</span>
       </a>
     `;
   }
@@ -1554,7 +1559,7 @@
     state.system = "all";
     state.habitability = "all";
     state.sortBy = "number";
-    state.sort = "desc";
+    state.sort = "asc";
     nodes.search.value = "";
     nodes.year.value = "all";
     nodes.arm.value = "all";
