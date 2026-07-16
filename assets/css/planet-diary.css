@@ -825,7 +825,15 @@ body.planet-diary-template {
 
 .planet-table-row {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-columns:
+    minmax(3.5rem, 0.65fr)
+    minmax(0, 1.35fr)
+    8rem
+    minmax(0, 1.15fr)
+    minmax(0, 1.25fr)
+    minmax(0, 0.9fr)
+    minmax(2.75rem, 0.5fr)
+    minmax(0, 2.2fr);
   gap: var(--gap);
   align-items: baseline;
   width: 100%;
@@ -897,33 +905,33 @@ a.planet-table-row:focus-visible {
 }
 
 .planet-table-name {
-  grid-column: 2 / 4;
+  grid-column: 2 / 3;
   overflow-wrap: anywhere;
 }
 
 .planet-table-date {
-  grid-column: 4 / 5;
+  grid-column: 3 / 4;
   font-variant-numeric: tabular-nums;
 }
 
 .planet-table-arm {
-  grid-column: 5 / 7;
+  grid-column: 4 / 5;
 }
 
 .planet-table-system {
-  grid-column: 7 / 9;
+  grid-column: 5 / 6;
 }
 
 .planet-table-class {
-  grid-column: 9 / 10;
+  grid-column: 6 / 7;
 }
 
 .planet-table-habitability {
-  grid-column: 10 / 11;
+  grid-column: 7 / 8;
 }
 
 .planet-table-synopsis {
-  grid-column: 11 / 13;
+  grid-column: 8 / 9;
   color: var(--muted);
   font-size: 0.86rem;
   line-height: 1.3;
