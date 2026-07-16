@@ -536,6 +536,56 @@ body.planet-diary-template {
   color: var(--ink);
 }
 
+.planet-about-author {
+  grid-column: 1 / 13;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--gap);
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.planet-about-author-heading {
+  grid-column: 1 / 5;
+}
+
+.planet-about-author-heading p,
+.planet-about-book-label {
+  margin: 0 0 0.65rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.planet-about-author-heading h2 {
+  font-size: clamp(3rem, 5.8vw, 5.6rem);
+}
+
+.planet-about-author-copy {
+  grid-column: 5 / 10;
+  color: var(--ink);
+  font-size: clamp(1.25rem, 1.75vw, 1.75rem);
+  line-height: 1.35;
+}
+
+.planet-about-author-copy p,
+.planet-about-book p {
+  margin-bottom: 1.2em;
+}
+
+.planet-about-book {
+  grid-column: 10 / 13;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.planet-about-book a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
 .planet-about-contact {
   grid-column: 1 / 13;
   display: grid;
@@ -1884,6 +1934,7 @@ a.planet-table-row:focus-visible {
   .planet-about-heading,
   .planet-about-copy,
   .planet-about-facts,
+  .planet-about-author,
   .planet-about-contact {
     grid-column: 1 / 5;
   }
@@ -1911,6 +1962,30 @@ a.planet-table-row:focus-visible {
   .planet-about-facts > div:nth-child(even) {
     padding-left: 1rem;
     border-left: 1px solid var(--line);
+  }
+
+  .planet-about-author {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 2rem;
+  }
+
+  .planet-about-author-heading,
+  .planet-about-author-copy,
+  .planet-about-book {
+    grid-column: 1 / 5;
+  }
+
+  .planet-about-author-heading h2 {
+    font-size: 3.2rem;
+  }
+
+  .planet-about-author-copy {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .planet-about-book {
+    margin-top: 1rem;
   }
 
   .planet-about-contact {
