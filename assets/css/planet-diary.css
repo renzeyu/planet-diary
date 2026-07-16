@@ -1725,7 +1725,7 @@ a.planet-table-row:focus-visible {
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1400px) {
   .planet-filter-form {
     grid-column: 1 / 13;
     grid-row: 2;
@@ -1740,7 +1740,9 @@ a.planet-table-row:focus-visible {
     grid-row: 1;
     margin-top: 0;
   }
+}
 
+@media (max-width: 900px) {
   .planet-gallery {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
