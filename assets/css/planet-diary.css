@@ -13,7 +13,6 @@ body.planet-diary-template {
   gap: var(--gap);
   align-items: end;
   padding: 1.5rem 0 1.25rem;
-  border-top: 1px solid var(--line);
 }
 
 .planet-catalog-header h1 {
@@ -57,7 +56,6 @@ body.planet-diary-template {
   gap: var(--gap);
   align-items: baseline;
   padding: 0.85rem 0;
-  border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
 
