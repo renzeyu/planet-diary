@@ -1,6 +1,6 @@
 # Planet Diary
 
-A standalone public archive of 943 illustrated worlds and short stories by Zeyu Ren.
+A standalone public archive of 943 illustrated worlds and short stories by Rofix.
 
 ## Local preview
 

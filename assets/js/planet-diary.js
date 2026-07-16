@@ -558,10 +558,10 @@
       const entry = entriesById.get(state.focusedId);
       nodes.focusLabel.textContent = `${t("planetaryRecord")} / #${entry.number}`;
       document.title = state.language === "zh"
-        ? `${entry.chineseName} — 星球日记 — Zeyu Ren`
-        : `${entry.englishName} — Planet Diary — Zeyu Ren`;
+        ? `${entry.chineseName} — 星球日记 — Rofix`
+        : `${entry.englishName} — Planet Diary — Rofix`;
     } else {
-      document.title = state.language === "zh" ? "星球日记 — Zeyu Ren" : "Planet Diary — Zeyu Ren";
+      document.title = state.language === "zh" ? "星球日记 — Rofix" : "Planet Diary — Rofix";
     }
   }
 

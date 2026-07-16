@@ -496,7 +496,7 @@
     };
 
     document.querySelectorAll(".site-title").forEach((title) => {
-      title.innerHTML = "Zeyu Ren";
+      title.innerHTML = "Rofix";
     });
 
     document.querySelectorAll(".site-nav").forEach((navigation) => {
@@ -522,7 +522,7 @@
     const footer = document.createElement("footer");
     footer.className = "site-footer";
     footer.innerHTML = `
-      <p>Zeyu Ren<br>© 2026<br><span data-footer-clock title="Current time in New York">--:--:--</span></p>
+      <p>Rofix<br>© 2026<br><span data-footer-clock title="Current time in New York">--:--:--</span></p>
       <p><a href="https://www.instagram.com/renzeyu/">Instagram</a><br><a href="https://vimeo.com/renzeyu">Vimeo</a><br><a href="https://www.linkedin.com/in/zeyuren">LinkedIn</a></p>
       <p>Design | Media Arts<br>UCLA<br>New York</p>
     `;
