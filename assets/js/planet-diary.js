@@ -36,7 +36,7 @@
     civic: "#f2c85b",
     frontier: "#c79bf2"
   };
-  const validViews = new Set(["detail", "gallery", "list", "map"]);
+  const validViews = new Set(["detail", "gallery", "list", "map", "about"]);
   const validSortFields = new Set(["number", "name", "date", "arm", "system", "world", "habitability", "synopsis"]);
   const url = new URL(window.location.href);
   const storedLanguage = (() => {
@@ -118,6 +118,19 @@
       gallery: "Gallery",
       list: "List",
       starMap: "Star Map",
+      about: "About",
+      aboutKicker: "Archive note",
+      aboutTitle: "About Planet Diary",
+      aboutParagraphOne: "Planet Diary is an ongoing illustrated science-fiction project by Rofix. Each entry pairs a painted world with a short story about its geography, biology, technology, folklore, or everyday life. Begun in 2016, the archive contains 943 worlds.",
+      aboutParagraphTwo: "Together, the entries form an expanding universe rather than a single continuous narrative. Recurring systems, cultures, climates, and ideas connect one planet to another, while every story can also be read on its own.",
+      aboutParagraphThree: "This site preserves the complete series and offers several ways into it: images, catalog records, dates, systems, and the star map. The stories were written in Chinese; English translations are provided throughout the archive.",
+      author: "Author",
+      begun: "Begun",
+      catalogSize: "Catalog",
+      originalLanguage: "Original language",
+      chinese: "Chinese",
+      contact: "Contact",
+      contactNote: "For publishing, exhibitions, translation, and other inquiries.",
       search: "Search",
       searchAria: "Search names, stories, and properties",
       year: "Year",
@@ -197,6 +210,19 @@
       gallery: "图库",
       list: "列表",
       starMap: "星图",
+      about: "关于",
+      aboutKicker: "档案说明",
+      aboutTitle: "关于《星球日记》",
+      aboutParagraphOne: "《星球日记》是 Rofix 持续创作的图文科幻项目。每篇作品由一幅星球绘画和一则短篇故事组成，描绘地球之外某处的地理、生物、技术、民俗或日常生活。项目始于 2016 年，目前共收录 943 个世界。",
+      aboutParagraphTwo: "这些条目共同构成一个不断生长、彼此松散相连的宇宙，而非一条单一连续的叙事。反复出现的星系、文明、气候与观念让不同星球相互呼应；与此同时，每则故事也可以独立阅读。",
+      aboutParagraphThree: "本站保存并整理这一完整系列，可按图像、编号、日期、星系或星图浏览。作品以中文写成，档案同时提供英文译文。",
+      author: "作者",
+      begun: "始于",
+      catalogSize: "收录",
+      originalLanguage: "原始语言",
+      chinese: "中文",
+      contact: "联系",
+      contactNote: "出版、展览、翻译及其他合作事宜。",
       search: "搜索",
       searchAria: "搜索名称、故事与属性",
       year: "年份",
@@ -557,12 +583,23 @@
     if (state.focusedId) {
       const entry = entriesById.get(state.focusedId);
       nodes.focusLabel.textContent = `${t("planetaryRecord")} / #${entry.number}`;
+    }
+    syncDocumentTitle();
+  }
+
+  function syncDocumentTitle() {
+    if (state.focusedId) {
+      const entry = entriesById.get(state.focusedId);
       document.title = state.language === "zh"
         ? `${entry.chineseName} — 星球日记 — Rofix`
         : `${entry.englishName} — Planet Diary — Rofix`;
-    } else {
-      document.title = state.language === "zh" ? "星球日记 — Rofix" : "Planet Diary — Rofix";
+      return;
     }
+    if (state.view === "about") {
+      document.title = state.language === "zh" ? "关于《星球日记》— Rofix" : "About Planet Diary — Rofix";
+      return;
+    }
+    document.title = state.language === "zh" ? "星球日记 — Rofix" : "Planet Diary — Rofix";
   }
 
   function setLanguage(language, { update = true } = {}) {
@@ -585,6 +622,7 @@
     if (state.focusedId) view = "detail";
     if (!validViews.has(view)) return;
     state.view = view;
+    root.classList.toggle("is-about-view", view === "about");
     root.querySelectorAll("[data-planet-view]").forEach((button) => {
       const selected = button.dataset.planetView === view;
       button.setAttribute("aria-selected", String(selected));
@@ -593,6 +631,7 @@
     root.querySelectorAll("[data-planet-panel]").forEach((panel) => {
       panel.hidden = panel.dataset.planetPanel !== view;
     });
+    syncDocumentTitle();
     if (render) renderCurrentView();
     if (update) updateUrl();
   }

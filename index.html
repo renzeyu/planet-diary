@@ -34,6 +34,7 @@
           <button type="button" role="tab" aria-selected="false" aria-controls="planet-gallery-view" data-planet-view="gallery" data-i18n="gallery">Gallery</button>
           <button type="button" role="tab" aria-selected="false" aria-controls="planet-list-view" data-planet-view="list" data-i18n="list">List</button>
           <button type="button" role="tab" aria-selected="false" aria-controls="planet-map-view" data-planet-view="map" data-i18n="starMap">Star Map</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="planet-about-view" data-planet-view="about" data-i18n="about">About</button>
         </div>
 
         <form class="planet-filter-form" data-planet-filters onsubmit="return false">
@@ -153,6 +154,34 @@
             <aside class="planet-map-selection" data-map-selection hidden></aside>
           </div>
         </div>
+      </section>
+
+      <section id="planet-about-view" class="planet-view planet-about-view" role="tabpanel" data-planet-panel="about" hidden>
+        <article class="planet-about">
+          <header class="planet-about-heading">
+            <p class="planet-about-kicker" data-i18n="aboutKicker">Archive note</p>
+            <h2 data-i18n="aboutTitle">About Planet Diary</h2>
+          </header>
+
+          <div class="planet-about-copy">
+            <p data-i18n="aboutParagraphOne">Planet Diary is an ongoing illustrated science-fiction project by Rofix. Each entry pairs a painted world with a short story about its geography, biology, technology, folklore, or everyday life. Begun in 2016, the archive contains 943 worlds.</p>
+            <p data-i18n="aboutParagraphTwo">Together, the entries form an expanding universe rather than a single continuous narrative. Recurring systems, cultures, climates, and ideas connect one planet to another, while every story can also be read on its own.</p>
+            <p data-i18n="aboutParagraphThree">This site preserves the complete series and offers several ways into it: images, catalog records, dates, systems, and the star map. The stories were written in Chinese; English translations are provided throughout the archive.</p>
+          </div>
+
+          <dl class="planet-about-facts">
+            <div><dt data-i18n="author">Author</dt><dd>Rofix</dd></div>
+            <div><dt data-i18n="begun">Begun</dt><dd>2016</dd></div>
+            <div><dt data-i18n="catalogSize">Catalog</dt><dd>943 <span data-i18n="worlds">worlds</span></dd></div>
+            <div><dt data-i18n="originalLanguage">Original language</dt><dd data-i18n="chinese">Chinese</dd></div>
+          </dl>
+
+          <section class="planet-about-contact">
+            <p class="planet-about-contact-label" data-i18n="contact">Contact</p>
+            <p class="planet-about-contact-note" data-i18n="contactNote">For publishing, exhibitions, translation, and other inquiries.</p>
+            <h3><a href="mailto:rofixren@gmail.com">rofixren@gmail.com</a></h3>
+          </section>
+        </article>
       </section>
 
       <button class="planet-back-to-top" type="button" data-planet-back-to-top aria-label="Back to top" title="Back to top" aria-hidden="true" tabindex="-1">↑</button>

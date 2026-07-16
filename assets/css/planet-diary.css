@@ -379,8 +379,12 @@ body.planet-diary-template {
 .planet-view-tabs {
   grid-column: 1 / 5;
   display: grid;
-  grid-template-columns: repeat(4, max-content);
+  grid-template-columns: repeat(5, max-content);
   gap: 1.25rem;
+}
+
+.planet-view-tabs button {
+  white-space: nowrap;
 }
 
 .planet-view-tabs button,
@@ -464,8 +468,103 @@ body.planet-diary-template {
   white-space: nowrap;
 }
 
+.planet-catalog.is-about-view .planet-view-tabs {
+  grid-column: 1 / 13;
+}
+
+.planet-catalog.is-about-view .planet-filter-form,
+.planet-catalog.is-about-view .planet-result-count {
+  display: none;
+}
+
 .planet-view[hidden] {
   display: none;
+}
+
+.planet-about {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--gap);
+  padding: 2rem 0 8rem;
+}
+
+.planet-about-heading {
+  grid-column: 1 / 5;
+}
+
+.planet-about-kicker,
+.planet-about-facts dt,
+.planet-about-contact-label {
+  margin: 0 0 0.65rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.planet-about-heading h2 {
+  max-width: 8ch;
+  font-size: clamp(3rem, 5.8vw, 5.6rem);
+}
+
+.planet-about-copy {
+  grid-column: 5 / 10;
+  color: var(--ink);
+  font-size: clamp(1.25rem, 1.75vw, 1.75rem);
+  line-height: 1.35;
+}
+
+.planet-about-copy p {
+  margin-bottom: 1.4em;
+}
+
+.planet-about-facts {
+  grid-column: 10 / 13;
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+
+.planet-about-facts > div {
+  padding: 0.75rem 0 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.planet-about-facts dt {
+  margin-bottom: 0.25rem;
+}
+
+.planet-about-facts dd {
+  margin: 0;
+  color: var(--ink);
+}
+
+.planet-about-contact {
+  grid-column: 1 / 13;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--gap);
+  align-items: baseline;
+  margin-top: 5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.planet-about-contact-label {
+  grid-column: 1 / 5;
+}
+
+.planet-about-contact-note {
+  grid-column: 5 / 9;
+  margin: 0;
+  color: var(--ink);
+}
+
+.planet-about-contact h3 {
+  grid-column: 9 / 13;
+  margin: 0;
+  text-align: right;
+}
+
+.planet-about-contact a {
+  color: var(--ink);
 }
 
 .planet-detail-card {
@@ -1776,8 +1875,65 @@ a.planet-table-row:focus-visible {
 
   .planet-view-tabs {
     grid-column: 1 / 5;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0.75rem;
+    font-size: 0.92rem;
+  }
+
+  .planet-about {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
+    padding: 1.5rem 0 5rem;
+  }
+
+  .planet-about-heading,
+  .planet-about-copy,
+  .planet-about-facts,
+  .planet-about-contact {
+    grid-column: 1 / 5;
+  }
+
+  .planet-about-heading h2 {
+    max-width: none;
+    font-size: 3.2rem;
+  }
+
+  .planet-about-copy {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .planet-about-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 1rem;
+  }
+
+  .planet-about-facts > div:nth-child(odd) {
+    padding-right: 1rem;
+  }
+
+  .planet-about-facts > div:nth-child(even) {
+    padding-left: 1rem;
+    border-left: 1px solid var(--line);
+  }
+
+  .planet-about-contact {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 3rem;
+  }
+
+  .planet-about-contact-label,
+  .planet-about-contact-note,
+  .planet-about-contact h3 {
+    grid-column: 1 / 5;
+  }
+
+  .planet-about-contact h3 {
+    margin-top: 1rem;
+    font-size: 1.5rem;
+    text-align: left;
+    overflow-wrap: anywhere;
   }
 
   .planet-filter-form {
