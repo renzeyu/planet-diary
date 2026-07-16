@@ -27,6 +27,9 @@
       return merged;
     })
     .sort((left, right) => right.number - left.number);
+  const dailyFeaturePool = [...entries].sort((left, right) => (
+    dailyFeatureRank(left.id) - dailyFeatureRank(right.id) || left.number - right.number
+  ));
 
   const armColors = {
     archive: "#8fa7ff",
@@ -98,6 +101,7 @@
     focusNav: root.querySelector("[data-planet-focus-nav]"),
     focusLabel: root.querySelector("[data-planet-focus-label]"),
     backToTop: root.querySelector("[data-planet-back-to-top]"),
+    dailyFeature: root.querySelector("[data-planet-daily-feature]"),
     detail: root.querySelector("[data-planet-detail-list]"),
     gallery: root.querySelector("[data-planet-gallery]"),
     list: root.querySelector("[data-planet-list]"),
@@ -120,6 +124,7 @@
       catalogControls: "Planet Diary controls",
       viewAs: "View Planet Diary as",
       cards: "Cards",
+      todayFeature: "Today's Feature",
       gallery: "Gallery",
       list: "List",
       starMap: "Star Map",
@@ -218,6 +223,7 @@
       catalogControls: "星球日记浏览工具",
       viewAs: "星球日记视图",
       cards: "卡片",
+      todayFeature: "今日星球",
       gallery: "图库",
       list: "列表",
       starMap: "星图",
@@ -345,6 +351,24 @@
 
   function languageAttribute() {
     return state.language === "zh" ? "zh-Hans" : "en";
+  }
+
+  function dailyFeatureRank(value) {
+    let hash = 2166136261;
+    for (const character of String(value)) {
+      hash = Math.imul(hash ^ character.charCodeAt(0), 16777619) >>> 0;
+    }
+    return hash;
+  }
+
+  function utcDateKey(date = new Date()) {
+    return date.toISOString().slice(0, 10);
+  }
+
+  function dailyFeatureEntry(date = new Date()) {
+    if (!dailyFeaturePool.length) return null;
+    const dayNumber = Math.floor(date.getTime() / 86400000);
+    return dailyFeaturePool[dayNumber % dailyFeaturePool.length];
   }
 
   function escapeHtml(value) {
@@ -778,6 +802,37 @@
     `;
   }
 
+  function dailyFeatureMarkup(entry) {
+    const image = entry.images?.[0];
+    const today = utcDateKey();
+    return `
+      <article class="planet-today-feature" style="${armStyle(entry.armId)}" aria-labelledby="planet-today-feature-${escapeHtml(entry.id)}">
+        <header class="planet-today-feature-heading">
+          <p class="planet-today-feature-kicker">
+            <span>${t("todayFeature")}</span>
+            <time datetime="${today}">${escapeHtml(displayDate(today))}</time>
+          </p>
+          <h2 id="planet-today-feature-${escapeHtml(entry.id)}" lang="${languageAttribute()}">
+            <span>#${entry.number}</span>
+            <a href="${escapeHtml(planetHref(entry.id))}">${escapeHtml(entryName(entry))}</a>
+          </h2>
+          <p class="planet-today-feature-meta">
+            ${escapeHtml(definitionLabel("systems", entry.systemId, state.language))}<br>
+            ${escapeHtml(displayDate(entry.date))}
+          </p>
+        </header>
+        <figure class="planet-today-feature-media">
+          ${image ? `<img src="${escapeHtml(imageUrl(image))}" alt="${escapeHtml(entryName(entry))}" ${image.width && image.height ? `width="${image.width}" height="${image.height}"` : ""} loading="eager" fetchpriority="high" decoding="async">` : ""}
+        </figure>
+        <div class="planet-today-feature-copy" lang="${languageAttribute()}">
+          <p class="planet-today-feature-label">${t("story")}</p>
+          <p class="planet-today-feature-story">${escapeHtml(entryStory(entry) || entryTagline(entry) || "")}</p>
+          <a class="planet-today-feature-link" href="${escapeHtml(planetHref(entry.id))}">${t("openDetail")} →</a>
+        </div>
+      </article>
+    `;
+  }
+
   function focusedDetailMarkup(entry) {
     const related = (entry.relatedIds || []).map((id) => entriesById.get(id)).filter(Boolean);
     const habitability = definitionItem("habitability", entry.habitability);
@@ -929,21 +984,30 @@
   }
 
   function renderFocusedDetail(entry) {
+    nodes.dailyFeature.hidden = true;
+    nodes.dailyFeature.innerHTML = "";
     nodes.detail.innerHTML = entry ? focusedDetailMarkup(entry) : `<p class="planet-empty">${t("notFound")}</p>`;
     updateMoreButton("detail", entry ? 1 : 0, entry ? 1 : 0);
     dispatchMedia(nodes.detail);
   }
 
   function renderDetail(filtered) {
+    const feature = dailyFeatureEntry();
+    nodes.dailyFeature.hidden = !feature;
+    nodes.dailyFeature.innerHTML = feature ? dailyFeatureMarkup(feature) : "";
+    if (feature) dispatchMedia(nodes.dailyFeature);
+    const regularEntries = feature
+      ? filtered.filter((entry) => entry.id !== feature.id)
+      : filtered;
     if (!state.focusedId && state.selectedId) {
-      const selectedIndex = filtered.findIndex((entry) => entry.id === state.selectedId);
+      const selectedIndex = regularEntries.findIndex((entry) => entry.id === state.selectedId);
       if (selectedIndex >= state.visible.detail) {
         state.visible.detail = Math.ceil((selectedIndex + 1) / 12) * 12;
       }
     }
-    const visible = state.focusedId ? filtered : filtered.slice(0, state.visible.detail);
+    const visible = state.focusedId ? regularEntries : regularEntries.slice(0, state.visible.detail);
     nodes.detail.innerHTML = visible.length ? visible.map(detailMarkup).join("") : `<p class="planet-empty">${t("noMatches")}</p>`;
-    updateMoreButton("detail", visible.length, filtered.length);
+    updateMoreButton("detail", visible.length, regularEntries.length);
     dispatchMedia(nodes.detail);
   }
 

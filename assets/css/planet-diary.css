@@ -732,6 +732,128 @@ body.planet-diary-template {
   color: var(--ink);
 }
 
+.planet-today-feature {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--gap);
+  align-items: start;
+  padding: 1.5rem 0 2rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.planet-today-feature-heading {
+  grid-column: 1 / 4;
+  min-width: 0;
+}
+
+.planet-today-feature-kicker {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.planet-today-feature-heading h2 {
+  margin: 0;
+  font-size: clamp(2.75rem, 4.6vw, 4.8rem);
+  line-height: 0.92;
+  overflow-wrap: anywhere;
+}
+
+.planet-today-feature-heading h2 span {
+  display: block;
+  margin-bottom: 0.55rem;
+  color: var(--muted);
+  font-size: 0.19em;
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.planet-today-feature-heading h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.planet-today-feature-heading h2 a:hover,
+.planet-today-feature-heading h2 a:focus-visible {
+  color: var(--muted);
+}
+
+.planet-today-feature-meta {
+  margin: 1.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.planet-today-feature-media {
+  grid-column: 4 / 9;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  margin: 0;
+  overflow: hidden;
+  background: #090909;
+}
+
+.planet-today-feature-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: default;
+}
+
+.planet-today-feature-media img:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 4px;
+}
+
+.planet-today-feature-media img:active,
+.planet-today-feature-media img.is-photo-pressed {
+  filter: brightness(1.18);
+}
+
+.planet-today-feature-copy {
+  grid-column: 9 / 13;
+  display: flex;
+  min-width: 0;
+  min-height: 100%;
+  flex-direction: column;
+  color: var(--ink);
+}
+
+.planet-today-feature-label {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.planet-today-feature-story {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  font-size: clamp(1.05rem, 1.45vw, 1.4rem);
+  line-height: 1.35;
+  white-space: pre-line;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 15;
+}
+
+.planet-today-feature-link {
+  align-self: flex-start;
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-bottom: 1px solid currentColor;
+  color: var(--ink);
+  font-size: 0.86rem;
+  text-decoration: none;
+}
+
 .planet-detail-card {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -2165,6 +2287,41 @@ a.planet-table-row:focus-visible {
 
   .planet-filter-reset {
     justify-self: start;
+  }
+
+  .planet-today-feature {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
+    padding: 1.25rem 0 1.75rem;
+  }
+
+  .planet-today-feature-heading,
+  .planet-today-feature-media,
+  .planet-today-feature-copy {
+    grid-column: 1 / 5;
+  }
+
+  .planet-today-feature-kicker {
+    margin-bottom: 1.25rem;
+  }
+
+  .planet-today-feature-heading h2 {
+    font-size: 3.35rem;
+  }
+
+  .planet-today-feature-media {
+    aspect-ratio: 1;
+  }
+
+  .planet-today-feature-story {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    -webkit-line-clamp: 8;
+  }
+
+  .planet-today-feature-link {
+    margin-top: 1.25rem;
+    padding-top: 0;
   }
 
   .planet-detail-card {
