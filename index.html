@@ -17,10 +17,13 @@
   <body class="planet-diary-template">
     <main class="planet-catalog">
       <header class="planet-catalog-header">
-        <h1 data-i18n="catalogTitle">Planet Diary</h1>
+        <div class="planet-catalog-identity">
+          <h1 data-i18n="catalogTitle">Planet Diary</h1>
+          <p class="planet-catalog-tagline" data-i18n="catalogTagline">A new illustrated sci-fi world every day</p>
+        </div>
         <div class="planet-catalog-summary">
           <p class="planet-catalog-author"><a href="https://zeyuren.com/">Rofix ↗</a></p>
-          <p><span data-planet-total>943</span> <span data-i18n="worlds">worlds</span><br>2016–2024</p>
+          <p class="planet-catalog-years">2016–2024</p>
           <div class="planet-language-switch" data-planet-language-switch role="group" aria-label="Language">
             <button type="button" data-planet-language="en" aria-pressed="true">EN</button>
             <button type="button" data-planet-language="zh" aria-pressed="false" lang="zh-Hans">中文</button>
@@ -37,11 +40,20 @@
           <button type="button" role="tab" aria-selected="false" aria-controls="planet-about-view" data-planet-view="about" data-i18n="about">About</button>
         </div>
 
-        <form class="planet-filter-form" data-planet-filters onsubmit="return false">
-          <label class="planet-search-field">
-            <span data-i18n="search">Search</span>
-            <input type="search" autocomplete="off" data-planet-search aria-label="Search names, stories, and properties" data-i18n-aria="searchAria">
+        <div class="planet-catalog-actions">
+          <label class="planet-catalog-search">
+            <span class="visually-hidden" data-i18n="search">Search</span>
+            <input type="search" autocomplete="off" placeholder="Search" data-planet-search aria-label="Search names, stories, and properties" data-i18n-aria="searchAria">
           </label>
+          <button class="planet-filter-toggle" type="button" data-planet-filter-toggle aria-expanded="false" aria-controls="planet-filter-panel">
+            <span class="planet-filter-icon" aria-hidden="true"></span>
+            <span class="planet-filter-count" data-planet-filter-count hidden></span>
+            <span class="visually-hidden" data-i18n="filters">Filters</span>
+          </button>
+          <p class="planet-result-count visually-hidden" data-planet-result-count aria-live="polite">943 results</p>
+        </div>
+
+        <form id="planet-filter-panel" class="planet-filter-form" data-planet-filters onsubmit="return false" hidden>
           <label>
             <span data-i18n="year">Year</span>
             <select data-planet-year aria-label="Filter by year">
@@ -88,8 +100,6 @@
           </label>
           <button type="button" class="planet-filter-reset" data-planet-reset data-i18n="clear">Clear</button>
         </form>
-
-        <p class="planet-result-count" data-planet-result-count aria-live="polite">943 results</p>
       </section>
 
       <nav class="planet-focus-nav" data-planet-focus-nav aria-label="Planet detail navigation" data-i18n-aria="detailNavigation" hidden>
@@ -145,7 +155,7 @@
               <span>PD–01</span>
               <span>N ↑</span>
             </div>
-            <svg class="planet-star-map" data-planet-map viewBox="0 0 1600 900" role="img" aria-labelledby="planet-map-title planet-map-description">
+            <svg class="planet-star-map" data-planet-map viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="planet-map-title planet-map-description">
               <title id="planet-map-title" data-i18n="mapTitle">Planet Diary star map</title>
               <desc id="planet-map-description" data-i18n="mapDescription">A navigable map of 943 planets grouped into six spiral arms and twenty-four systems.</desc>
               <g data-map-viewport></g>
@@ -161,6 +171,7 @@
           <header class="planet-about-heading">
             <p class="planet-about-kicker" data-i18n="aboutKicker">Archive note</p>
             <h2 data-i18n="aboutTitle">About Planet Diary</h2>
+            <a class="planet-about-support" href="https://buymeacoffee.com/rofix" target="_blank" rel="noopener noreferrer" data-i18n="supportProject">♥ Support Planet Diary ↗</a>
           </header>
 
           <div class="planet-about-copy">

@@ -22,19 +22,17 @@ The site has no build step and no package dependencies.
 - `assets/archive/planet-diary-translations.js` - Chinese and English story text
 - `assets/archive/images/` - optimized public illustrations
 
-## Publish with GitHub Pages
+## Live site
 
-1. Create a GitHub repository, for example `planet-diary`.
-2. Add that repository as this folder's `origin` remote.
-3. Push the `main` branch.
-4. In the repository's **Settings > Pages**, choose **Deploy from a branch**.
-5. Select `main` and `/ (root)`.
+- Custom domain: <https://planetdiary.org>
+- Repository: <https://github.com/renzeyu/planet-diary>
+- GitHub Pages fallback: <https://renzeyu.github.io/planet-diary/>
 
-The `.nojekyll` file tells GitHub Pages to publish these static files without Jekyll processing.
+GitHub Pages publishes directly from `main` at `/ (root)`. The site has no build step; pushing a commit to `main` updates the live site. The `.nojekyll` file tells GitHub Pages to serve the static files without Jekyll processing.
 
 ## Custom domain
 
-Configure the domain in **Settings > Pages** before changing DNS. For a subdomain, add the DNS CNAME requested by GitHub. Add a `CNAME` file here only after the final domain is chosen.
+The root `CNAME` file assigns `planetdiary.org` to this Pages site. At the DNS provider, the apex domain uses GitHub Pages' four `A` records and `www` points to `renzeyu.github.io` with a `CNAME` record.
 
 ## Publishing safety
 

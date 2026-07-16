@@ -75,6 +75,7 @@
     sort: ["asc", "desc"].includes(requestedSortDirection) ? requestedSortDirection : defaultSortDirection(initialSortBy),
     language: initialLanguage,
     mapTheme: initialMapTheme,
+    filtersOpen: false,
     visible: { detail: 12, gallery: 48, list: 120 },
     focusedId: initialFocusedId,
     selectedId: null
@@ -83,6 +84,9 @@
   const nodes = {
     total: root.querySelector("[data-planet-total]"),
     result: root.querySelector("[data-planet-result-count]"),
+    filterForm: root.querySelector("[data-planet-filters]"),
+    filterToggle: root.querySelector("[data-planet-filter-toggle]"),
+    filterCount: root.querySelector("[data-planet-filter-count]"),
     search: root.querySelector("[data-planet-search]"),
     year: root.querySelector("[data-planet-year]"),
     arm: root.querySelector("[data-planet-arm]"),
@@ -111,6 +115,7 @@
   const copy = {
     en: {
       catalogTitle: "Planet Diary",
+      catalogTagline: "A new illustrated sci-fi world every day",
       worlds: "worlds",
       catalogControls: "Planet Diary controls",
       viewAs: "View Planet Diary as",
@@ -134,6 +139,8 @@
       bookLink: "View the book on WeRead ↗",
       contact: "Contact",
       contactNote: "For publishing, exhibitions, translation, and other inquiries.",
+      supportProject: "♥ Support Planet Diary ↗",
+      filters: "Filters",
       search: "Search",
       searchAria: "Search names, stories, and properties",
       year: "Year",
@@ -206,6 +213,7 @@
     },
     zh: {
       catalogTitle: "星球日记",
+      catalogTagline: "每天一个原创星球故事",
       worlds: "个世界",
       catalogControls: "星球日记浏览工具",
       viewAs: "星球日记视图",
@@ -229,6 +237,8 @@
       bookLink: "在微信读书查看《星球日记》↗",
       contact: "联系",
       contactNote: "出版、展览、翻译及其他合作事宜。",
+      supportProject: "♥ 支持《星球日记》↗",
+      filters: "筛选",
       search: "搜索",
       searchAria: "搜索名称、故事与属性",
       year: "年份",
@@ -538,11 +548,40 @@
     window.history.replaceState({}, "", next);
   }
 
+  function activeFilterCount() {
+    return [
+      state.year !== "all",
+      state.arm !== "all",
+      state.system !== "all",
+      state.habitability !== "all"
+    ].filter(Boolean).length;
+  }
+
+  function syncFilterControls() {
+    const count = activeFilterCount();
+    const customSort = state.sortBy !== "number" || state.sort !== "asc";
+    const label = t("filters");
+    nodes.filterForm.hidden = !state.filtersOpen;
+    nodes.filterToggle.setAttribute("aria-expanded", String(state.filtersOpen));
+    nodes.filterToggle.setAttribute("aria-label", count ? `${label} (${count})` : label);
+    nodes.filterToggle.title = label;
+    nodes.filterToggle.classList.toggle("is-active", count > 0 || customSort);
+    nodes.filterCount.hidden = count === 0;
+    nodes.filterCount.textContent = String(count);
+  }
+
+  function setFiltersOpen(open, { restoreFocus = false } = {}) {
+    state.filtersOpen = Boolean(open);
+    syncFilterControls();
+    if (restoreFocus) nodes.filterToggle.focus();
+  }
+
   function syncStatus(filtered) {
     if (nodes.total) nodes.total.textContent = entries.length;
     if (nodes.result) nodes.result.textContent = state.language === "zh"
       ? `${filtered.length} ${t("results")}`
       : `${filtered.length} ${t(filtered.length === 1 ? "result" : "results")}`;
+    syncFilterControls();
   }
 
   function applyStaticTranslations() {
@@ -565,6 +604,7 @@
     nodes.arm.setAttribute("aria-label", state.language === "zh" ? "按旋臂筛选" : "Filter by spiral arm");
     nodes.system.setAttribute("aria-label", state.language === "zh" ? "按星系筛选" : "Filter by system");
     nodes.habitability.setAttribute("aria-label", state.language === "zh" ? "按适居等级筛选" : "Filter by habitability");
+    nodes.search.placeholder = t("search");
     nodes.sortBy.setAttribute("aria-label", state.language === "zh" ? "选择排序属性" : "Sort by property");
     const activeSortLabel = sortFieldLabel(state.sortBy);
     nodes.sort.setAttribute("aria-label", state.language === "zh"
@@ -590,6 +630,7 @@
       const entry = entriesById.get(state.focusedId);
       nodes.focusLabel.textContent = `${t("planetaryRecord")} / #${entry.number}`;
     }
+    syncFilterControls();
     syncDocumentTitle();
   }
 
@@ -628,6 +669,7 @@
     if (state.focusedId) view = "detail";
     if (!validViews.has(view)) return;
     state.view = view;
+    if (view === "about") setFiltersOpen(false);
     root.classList.toggle("is-about-view", view === "about");
     root.querySelectorAll("[data-planet-view]").forEach((button) => {
       const selected = button.dataset.planetView === view;
@@ -1568,9 +1610,19 @@
     };
   }
 
+  function syncMapViewportMode() {
+    const mode = window.matchMedia("(max-width: 640px)").matches
+      ? "xMidYMid slice"
+      : "xMidYMid meet";
+    if (nodes.map.getAttribute("preserveAspectRatio") !== mode) {
+      nodes.map.setAttribute("preserveAspectRatio", mode);
+    }
+  }
+
   function mapViewportMetrics() {
     const rect = nodes.map.getBoundingClientRect();
-    const scale = Math.min(rect.width / 1600, rect.height / 900);
+    const fillsFrame = nodes.map.getAttribute("preserveAspectRatio")?.includes("slice");
+    const scale = (fillsFrame ? Math.max : Math.min)(rect.width / 1600, rect.height / 900);
     return {
       rect,
       scale,
@@ -1683,6 +1735,10 @@
       });
     });
 
+    nodes.filterToggle.addEventListener("click", () => {
+      setFiltersOpen(!state.filtersOpen);
+    });
+
     nodes.search.addEventListener("input", () => {
       window.clearTimeout(searchTimer);
       searchTimer = window.setTimeout(handleFilterChange, 120);
@@ -1711,6 +1767,7 @@
     });
     window.addEventListener("scroll", scheduleBackToTopSync, { passive: true });
     window.addEventListener("resize", scheduleBackToTopSync);
+    window.addEventListener("resize", syncMapViewportMode);
 
     root.querySelectorAll("[data-planet-more]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -1807,9 +1864,17 @@
     });
     nodes.mapFullscreen?.addEventListener("click", toggleMapFullscreen);
     nodes.mapTheme?.addEventListener("click", toggleMapTheme);
-    document.addEventListener("fullscreenchange", syncFullscreenButton);
+    document.addEventListener("fullscreenchange", () => {
+      syncFullscreenButton();
+      syncMapViewportMode();
+    });
     document.addEventListener("keydown", (event) => {
-      if (event.key !== "Escape" || !state.selectedId || mapIsFullscreen()) return;
+      if (event.key !== "Escape") return;
+      if (state.filtersOpen) {
+        setFiltersOpen(false, { restoreFocus: true });
+        return;
+      }
+      if (!state.selectedId || mapIsFullscreen()) return;
       state.selectedId = null;
       renderMap(filteredEntries());
     });
@@ -1819,6 +1884,7 @@
     applyStaticTranslations();
     populateControls();
     bindEvents();
+    syncMapViewportMode();
     if (state.focusedId) {
       state.view = "detail";
       root.classList.add("is-planet-focused");
