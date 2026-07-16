@@ -684,11 +684,6 @@ body.planet-diary-template {
   line-height: 1.24;
 }
 
-.planet-detail-tagline {
-  margin-bottom: 1.4rem;
-  color: var(--muted);
-}
-
 .planet-detail-story {
   white-space: pre-line;
 }

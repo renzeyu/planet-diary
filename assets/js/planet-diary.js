@@ -720,7 +720,6 @@
         </header>
         ${detailImages(entry)}
         <div class="planet-detail-copy" lang="${languageAttribute()}">
-          <p class="planet-detail-tagline">${escapeHtml(entryTagline(entry))}</p>
           <p class="planet-detail-story">${escapeHtml(entryStory(entry) || "")}</p>
           <div class="planet-detail-links">
             ${related.map((item) => `<a href="${escapeHtml(planetHref(item.id))}">${escapeHtml(entryName(item))}</a>`).join("")}
