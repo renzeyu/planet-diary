@@ -485,7 +485,7 @@ body.planet-diary-template {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--gap);
-  padding: 2rem 0 8rem;
+  padding: 2rem 0 1.5rem;
 }
 
 .planet-about-heading {
@@ -516,6 +516,10 @@ body.planet-diary-template {
   margin-bottom: 1.4em;
 }
 
+.planet-about-copy p:last-child {
+  margin-bottom: 0;
+}
+
 .planet-about-facts {
   grid-column: 10 / 13;
   margin: 0;
@@ -541,7 +545,7 @@ body.planet-diary-template {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--gap);
-  margin-top: 3rem;
+  margin-top: 1.5rem;
   padding-top: 1rem;
   border-top: 1px solid var(--line);
 }
@@ -592,9 +596,13 @@ body.planet-diary-template {
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--gap);
   align-items: baseline;
-  margin-top: 5rem;
+  margin-top: 1.5rem;
   padding-top: 1rem;
   border-top: 1px solid var(--line);
+}
+
+.planet-catalog.is-about-view + .site-footer {
+  margin-top: 0;
 }
 
 .planet-about-contact-label {
@@ -1928,7 +1936,7 @@ a.planet-table-row:focus-visible {
   .planet-about {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1.25rem;
-    padding: 1.5rem 0 5rem;
+    padding: 1.5rem 0 1rem;
   }
 
   .planet-about-heading,
@@ -1966,7 +1974,7 @@ a.planet-table-row:focus-visible {
 
   .planet-about-author {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-top: 2rem;
+    margin-top: 1.25rem;
   }
 
   .planet-about-author-heading,
@@ -1990,7 +1998,7 @@ a.planet-table-row:focus-visible {
 
   .planet-about-contact {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-top: 3rem;
+    margin-top: 1.25rem;
   }
 
   .planet-about-contact-label,
