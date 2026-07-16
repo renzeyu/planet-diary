@@ -13,6 +13,7 @@ body.planet-diary-template {
   gap: var(--gap);
   align-items: end;
   padding: 1.5rem 0 2rem;
+  border-top: 1px solid var(--line);
 }
 
 .planet-catalog-header h1 {
@@ -46,6 +47,7 @@ body.planet-diary-template {
   gap: var(--gap);
   align-items: start;
   padding: 1rem 0 1.25rem;
+  border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
 
@@ -55,6 +57,7 @@ body.planet-diary-template {
   gap: var(--gap);
   align-items: baseline;
   padding: 0.85rem 0;
+  border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
 
@@ -123,6 +126,7 @@ body.planet-diary-template {
 
 .planet-record-hero {
   padding: 2.5rem 0 6rem;
+  border-bottom: 1px solid var(--line);
 }
 
 .planet-record-copy {
@@ -209,13 +213,23 @@ body.planet-diary-template {
 .planet-record-key-facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.25rem var(--gap);
   margin: 2rem 0 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
 .planet-record-key-facts > div {
   min-width: 0;
   padding: 0.75rem 1rem 0.9rem 0;
+}
+
+.planet-record-key-facts > div:nth-child(even) {
+  padding-left: 1rem;
+  border-left: 1px solid var(--line);
+}
+
+.planet-record-key-facts > div:nth-child(n + 3) {
+  border-top: 1px solid var(--line);
 }
 
 .planet-record-key-facts dt,
@@ -275,6 +289,7 @@ body.planet-diary-template {
 
 .planet-record-section {
   padding: 2rem 0 6rem;
+  border-bottom: 1px solid var(--line);
 }
 
 .planet-record > .planet-record-section:last-child {
@@ -310,7 +325,7 @@ body.planet-diary-template {
   grid-column: 4 / 13;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem var(--gap);
+  gap: 0 var(--gap);
   margin: 0;
 }
 
@@ -318,6 +333,7 @@ body.planet-diary-template {
   min-width: 0;
   min-height: 5.25rem;
   padding: 0.75rem 0 1.1rem;
+  border-top: 1px solid var(--line);
 }
 
 .planet-record-property dd {
@@ -330,6 +346,7 @@ body.planet-diary-template {
 
 .planet-record-related-list {
   grid-column: 4 / 13;
+  border-top: 1px solid var(--line);
 }
 
 .planet-record-related-list a {
@@ -339,6 +356,7 @@ body.planet-diary-template {
   align-items: baseline;
   min-height: 3.25rem;
   padding: 0.75rem 0;
+  border-bottom: 1px solid var(--line);
   color: var(--ink);
 }
 
@@ -505,10 +523,12 @@ body.planet-diary-template {
 .planet-about-facts {
   grid-column: 10 / 13;
   margin: 0;
+  border-top: 1px solid var(--line);
 }
 
 .planet-about-facts > div {
   padding: 0.75rem 0 1rem;
+  border-bottom: 1px solid var(--line);
 }
 
 .planet-about-facts dt {
@@ -527,6 +547,7 @@ body.planet-diary-template {
   gap: var(--gap);
   margin-top: 1.5rem;
   padding-top: 1rem;
+  border-top: 1px solid var(--line);
 }
 
 .planet-about-author-heading {
@@ -559,6 +580,7 @@ body.planet-diary-template {
 .planet-about-book {
   grid-column: 10 / 13;
   padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
   color: var(--ink);
 }
 
@@ -576,6 +598,7 @@ body.planet-diary-template {
   align-items: baseline;
   margin-top: 1.5rem;
   padding-top: 1rem;
+  border-top: 1px solid var(--line);
 }
 
 .planet-catalog.is-about-view + .site-footer {
@@ -607,7 +630,12 @@ body.planet-diary-template {
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--gap);
   padding: 1.5rem 0 5.5rem;
+  border-top: 1px solid var(--line);
   scroll-margin-top: calc(var(--nav-height) + 1rem);
+}
+
+.planet-detail-index .planet-detail-card:first-child {
+  border-top: 0;
 }
 
 .planet-detail-meta {
@@ -805,6 +833,7 @@ body.planet-diary-template {
   width: 100%;
   min-height: 2.65rem;
   border: 0;
+  border-bottom: 1px solid var(--line);
   padding: 0.65rem 0;
   background: transparent;
   color: var(--ink);
@@ -963,6 +992,7 @@ a.planet-table-row:focus-visible {
   gap: var(--gap);
   align-items: start;
   padding: 0 0 1rem;
+  border-bottom: 1px solid var(--line);
   color: var(--chart-ink);
 }
 
@@ -1061,6 +1091,7 @@ a.planet-table-row:focus-visible {
 
 .planet-map-frame:fullscreen .planet-map-toolbar {
   padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--chart-line);
   background: var(--chart-frame);
 }
 
@@ -1476,6 +1507,7 @@ a.planet-table-row:focus-visible {
 
 .planet-map-selection-media {
   flex: 0 0 auto;
+  border-bottom: 1px solid var(--chart-line);
   background: #090909;
 }
 
@@ -1540,8 +1572,8 @@ a.planet-table-row:focus-visible {
 
 .planet-map-selection-facts {
   display: grid;
-  gap: 0.35rem;
   margin: 1.25rem 0;
+  border-top: 1px solid var(--chart-line);
 }
 
 .planet-map-selection-facts div {
@@ -1549,6 +1581,7 @@ a.planet-table-row:focus-visible {
   grid-template-columns: 5.5rem minmax(0, 1fr);
   gap: 0.75rem;
   padding: 0.45rem 0;
+  border-bottom: 1px solid var(--chart-line);
 }
 
 .planet-map-selection-facts dt {
@@ -1573,8 +1606,7 @@ a.planet-table-row:focus-visible {
 }
 
 .planet-map-selection-related-list {
-  display: grid;
-  gap: 0.25rem;
+  border-top: 1px solid var(--chart-line);
 }
 
 .planet-map-selection-related-list button {
@@ -1585,6 +1617,7 @@ a.planet-table-row:focus-visible {
   align-items: start;
   padding: 0.55rem 0;
   border: 0;
+  border-bottom: 1px solid var(--chart-line);
   background: transparent;
   color: var(--chart-ink);
   font: inherit;
@@ -1662,6 +1695,17 @@ a.planet-table-row:focus-visible {
     grid-column: 1 / 13;
     grid-row: 3;
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .planet-record-key-facts > div {
+    padding-left: 1rem;
+    border-top: 0;
+    border-left: 1px solid var(--line);
+  }
+
+  .planet-record-key-facts > div:first-child {
+    padding-left: 0;
+    border-left: 0;
   }
 
   .planet-record-heading h1 {
@@ -1836,6 +1880,20 @@ a.planet-table-row:focus-visible {
     margin-top: 1rem;
   }
 
+  .planet-record-key-facts > div {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .planet-record-key-facts > div:nth-child(even) {
+    padding-left: 1rem;
+    border-left: 1px solid var(--line);
+  }
+
+  .planet-record-key-facts > div:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+
   .planet-record-section {
     padding: 1.5rem 0 4rem;
   }
@@ -1911,6 +1969,7 @@ a.planet-table-row:focus-visible {
 
   .planet-about-facts > div:nth-child(even) {
     padding-left: 1rem;
+    border-left: 1px solid var(--line);
   }
 
   .planet-about-author {
@@ -2021,6 +2080,7 @@ a.planet-table-row:focus-visible {
     grid-column: 1 / -1;
     grid-template-columns: minmax(6.5rem, 0.8fr) minmax(0, 1.2fr);
     padding-top: 1rem;
+    border-top: 1px solid var(--line);
   }
 
   .planet-gallery {
@@ -2134,6 +2194,7 @@ a.planet-table-row:focus-visible {
   .planet-map-selection-media {
     grid-column: 1 / 2;
     border-right: 1px solid var(--chart-line);
+    border-bottom: 0;
   }
 
   .planet-map-selection img {
