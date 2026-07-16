@@ -12,7 +12,7 @@ body.planet-diary-template {
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--gap);
   align-items: end;
-  padding: 1.5rem 0 2rem;
+  padding: 1.5rem 0 1.25rem;
   border-top: 1px solid var(--line);
 }
 
@@ -46,7 +46,7 @@ body.planet-diary-template {
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--gap);
   align-items: start;
-  padding: 1rem 0 1.25rem;
+  padding: 1rem 0 0.75rem;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -125,7 +125,7 @@ body.planet-diary-template {
 }
 
 .planet-record-hero {
-  padding: 2.5rem 0 6rem;
+  padding: 2.5rem 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -213,7 +213,7 @@ body.planet-diary-template {
 .planet-record-key-facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin: 2rem 0 0;
+  margin: 1.25rem 0 0;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -288,16 +288,16 @@ body.planet-diary-template {
 }
 
 .planet-record-section {
-  padding: 2rem 0 6rem;
+  padding: 2rem 0 2.5rem;
   border-bottom: 1px solid var(--line);
 }
 
 .planet-record > .planet-record-section:last-child {
-  padding-bottom: 4rem;
+  padding-bottom: 2rem;
 }
 
-.planet-diary-template.is-planet-record .site-footer {
-  margin-top: 3rem;
+.planet-diary-template .site-footer {
+  margin-top: 2rem;
 }
 
 .planet-record-section-header {
@@ -545,7 +545,7 @@ body.planet-diary-template {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--gap);
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid var(--line);
 }
@@ -596,7 +596,7 @@ body.planet-diary-template {
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--gap);
   align-items: baseline;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid var(--line);
 }
@@ -629,7 +629,7 @@ body.planet-diary-template {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--gap);
-  padding: 1.5rem 0 5.5rem;
+  padding: 1.5rem 0;
   border-top: 1px solid var(--line);
   scroll-margin-top: calc(var(--nav-height) + 1rem);
 }
@@ -762,7 +762,7 @@ body.planet-diary-template {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 4rem var(--gap);
-  padding: 1.5rem 0 4rem;
+  padding: 1.5rem 0;
 }
 
 .planet-gallery-card {
@@ -822,7 +822,7 @@ body.planet-diary-template {
 }
 
 .planet-table {
-  padding-bottom: 3rem;
+  padding-bottom: 1.5rem;
 }
 
 .planet-table-row {
@@ -924,7 +924,7 @@ a.planet-table-row:focus-visible {
 .planet-load-more {
   display: flex;
   justify-content: center;
-  padding: 1rem 0 6rem;
+  padding: 1rem 0 1.5rem;
 }
 
 .planet-load-more button {
@@ -991,7 +991,7 @@ a.planet-table-row:focus-visible {
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--gap);
   align-items: start;
-  padding: 0 0 1rem;
+  padding: 0 0 0.65rem;
   border-bottom: 1px solid var(--line);
   color: var(--chart-ink);
 }
@@ -1572,7 +1572,7 @@ a.planet-table-row:focus-visible {
 
 .planet-map-selection-facts {
   display: grid;
-  margin: 1.25rem 0;
+  margin: 0.75rem 0;
   border-top: 1px solid var(--chart-line);
 }
 
@@ -1594,7 +1594,7 @@ a.planet-table-row:focus-visible {
 }
 
 .planet-map-selection-related {
-  margin: 1.25rem 0;
+  margin: 0.75rem 0;
 }
 
 .planet-map-selection-related .planet-map-selection-related-label {
@@ -1660,7 +1660,7 @@ a.planet-table-row:focus-visible {
 
 .planet-empty,
 .planet-noscript {
-  padding: 2rem 0 6rem;
+  padding: 2rem 0;
   color: var(--ink);
 }
 
@@ -1761,7 +1761,7 @@ a.planet-table-row:focus-visible {
   .planet-catalog-header {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1.25rem;
-    padding: 1rem 0 1.5rem;
+    padding: 1rem 0;
   }
 
   .planet-catalog-header h1 {
@@ -1811,7 +1811,7 @@ a.planet-table-row:focus-visible {
   }
 
   .planet-record-hero {
-    padding: 1.5rem 0 4rem;
+    padding: 1.5rem 0 2rem;
   }
 
   .planet-record-copy {
@@ -1895,7 +1895,7 @@ a.planet-table-row:focus-visible {
   }
 
   .planet-record-section {
-    padding: 1.5rem 0 4rem;
+    padding: 1.5rem 0 2rem;
   }
 
   .planet-record-section-header h2 {
@@ -1974,7 +1974,7 @@ a.planet-table-row:focus-visible {
 
   .planet-about-author {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-top: 1.25rem;
+    margin-top: 1rem;
   }
 
   .planet-about-author-heading,
@@ -1998,7 +1998,7 @@ a.planet-table-row:focus-visible {
 
   .planet-about-contact {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-top: 1.25rem;
+    margin-top: 1rem;
   }
 
   .planet-about-contact-label,
@@ -2042,7 +2042,7 @@ a.planet-table-row:focus-visible {
   .planet-detail-card {
     grid-template-columns: 1fr;
     gap: 1.25rem;
-    padding: 1.25rem 0 4rem;
+    padding: 1.25rem 0;
     scroll-margin-top: 1rem;
   }
 
