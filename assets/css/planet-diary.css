@@ -839,8 +839,18 @@ body.planet-diary-template {
 }
 
 a.planet-table-row {
+  height: 3.75rem;
+  min-height: 3.75rem;
+  overflow: hidden;
   cursor: pointer;
   text-decoration: none;
+}
+
+a.planet-table-row > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 a.planet-table-row:hover,
@@ -2097,6 +2107,11 @@ a.planet-table-row:focus-visible {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     min-height: 3.5rem;
     gap: 0.5rem 1rem;
+  }
+
+  a.planet-table-row {
+    height: 5.75rem;
+    min-height: 5.75rem;
   }
 
   .planet-table-number {
