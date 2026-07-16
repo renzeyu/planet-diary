@@ -423,6 +423,7 @@ body.planet-diary-template {
   min-width: 0;
   height: 1.8rem;
   border: 0;
+  border-bottom: 1px solid var(--line);
   border-radius: 0;
   outline: 0;
   background: transparent;
@@ -430,14 +431,14 @@ body.planet-diary-template {
   font: inherit;
 }
 
-.planet-filter-form input:focus-visible,
-.planet-filter-form select:focus-visible {
-  outline: 1px solid var(--ink);
-  outline-offset: 2px;
+.planet-filter-form input:focus,
+.planet-filter-form select:focus {
+  border-bottom-color: var(--ink);
 }
 
 .planet-filter-reset {
   height: 1.8rem;
+  border-bottom: 1px solid currentColor;
 }
 
 .planet-result-count {
