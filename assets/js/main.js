@@ -1252,7 +1252,7 @@
   function setupPlanetDiaryLightbox() {
     if (!document.body.classList.contains("planet-diary-template")) return;
     setupImageLightbox({
-      selector: ".planet-diary-template [data-planet-panel]:not([hidden]) .planet-detail-media img, .planet-diary-template [data-planet-panel]:not([hidden]) .planet-record-plate img, .planet-diary-template [data-planet-panel]:not([hidden]) .planet-gallery-media img, .planet-diary-template [data-planet-panel]:not([hidden]) .planet-map-selection img",
+      selector: ".planet-diary-template [data-planet-panel]:not([hidden]) .planet-detail-media img, .planet-diary-template [data-planet-panel]:not([hidden]) .planet-record-plate img, .planet-diary-template [data-planet-panel]:not([hidden]) .planet-map-selection img",
       viewerLabel: "Planet illustration viewer",
       itemLabel: "planet illustration",
       captionFor: (image) => image.alt || "Planet illustration",

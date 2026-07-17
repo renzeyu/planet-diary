@@ -834,9 +834,12 @@ body.planet-diary-template {
 
 .planet-detail-media img,
 .planet-record-plate img,
-.planet-gallery-media img,
 .planet-map-selection img {
   cursor: default;
+}
+
+.planet-gallery-card > a .planet-gallery-media img {
+  cursor: pointer;
 }
 
 .planet-detail-media img {
