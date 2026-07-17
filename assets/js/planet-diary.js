@@ -130,7 +130,6 @@
     mapViewport: root.querySelector("[data-map-viewport]"),
     mapStage: root.querySelector("[data-planet-map-stage]"),
     mapFrame: root.querySelector("[data-map-frame]"),
-    mapLegend: root.querySelector("[data-map-legend]"),
     mapTooltip: root.querySelector("[data-map-tooltip]"),
     mapSelection: root.querySelector("[data-map-selection]"),
     mapFullscreen: root.querySelector("[data-map-fullscreen]"),
@@ -194,14 +193,10 @@
       backToCatalog: "← All planets",
       planetaryRecord: "Planetary record",
       tableCatalog: "Planet Diary catalog",
-      armLegend: "Spiral arm legend",
       mapControls: "Map controls",
       mapTitle: "Planet Diary star map",
-      mapDescription: "A navigable map of 943 planets grouped into six spiral arms and twenty-four systems.",
+      mapDescription: "A navigable map of Planet Diary worlds grouped into spiral arms and systems.",
       mapIndex: "Star Map",
-      mapWorldCount: "worlds",
-      mapSystemCount: "systems",
-      mapArmCount: "spiral arms",
       mapSystemRoute: "System route",
       mapRelatedRoute: "Related world",
       enterFullscreen: "Enter fullscreen",
@@ -305,14 +300,10 @@
       backToCatalog: "← 全部星球",
       planetaryRecord: "行星档案",
       tableCatalog: "星球日记目录",
-      armLegend: "旋臂图例",
       mapControls: "星图控制",
       mapTitle: "星球日记星图",
-      mapDescription: "可浏览的943颗行星星图，分布于六条旋臂与二十四个星系。",
+      mapDescription: "可浏览的《星球日记》世界星图，以旋臂与星系组织。",
       mapIndex: "星图",
-      mapWorldCount: "颗星球",
-      mapSystemCount: "个星系",
-      mapArmCount: "条旋臂",
       mapSystemRoute: "星系航路",
       mapRelatedRoute: "关联星球",
       enterFullscreen: "进入全屏",
@@ -1648,10 +1639,6 @@
       <g class="planet-map-planet-labels">${planetLabels}</g>
       <g class="planet-map-system-labels">${systemLabels}</g>
     `;
-    nodes.mapLegend.innerHTML = Object.keys(definitions.arms).map((id, index) => {
-      const count = entries.filter((entry) => entry.armId === id).length;
-      return `<span><i>${String(index + 1).padStart(2, "0")}</i><b>${escapeHtml(definitionLabel("arms", id, state.language))}</b><small>${count}</small></span>`;
-    }).join("");
     mapState.built = true;
     updateMapTransform();
   }

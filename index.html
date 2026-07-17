@@ -122,21 +122,13 @@
       </section>
 
       <section id="planet-map-view" class="planet-view planet-map-view" role="tabpanel" data-planet-panel="map" hidden>
-        <header class="planet-map-masthead">
-          <p class="planet-map-index" data-i18n="mapIndex">Star Map</p>
-          <p class="planet-map-stats">
-            <span><strong>943</strong> <span data-i18n="mapWorldCount">worlds</span></span>
-            <span><strong>24</strong> <span data-i18n="mapSystemCount">systems</span></span>
-            <span><strong>6</strong> <span data-i18n="mapArmCount">spiral arms</span></span>
-          </p>
-          <p class="planet-map-line-key">
-            <span class="is-route" data-i18n="mapSystemRoute">System route</span>
-            <span class="is-related" data-i18n="mapRelatedRoute">Related world</span>
-          </p>
-        </header>
         <div class="planet-map-frame" data-map-frame>
-          <div class="planet-map-toolbar">
-            <div class="planet-map-legend" data-map-legend aria-label="Spiral arm legend" data-i18n-aria="armLegend"></div>
+          <header class="planet-map-toolbar">
+            <p class="planet-map-index" data-i18n="mapIndex">Star Map</p>
+            <p class="planet-map-line-key">
+              <span class="is-route" data-i18n="mapSystemRoute">System route</span>
+              <span class="is-related" data-i18n="mapRelatedRoute">Related world</span>
+            </p>
             <div class="planet-map-zoom" aria-label="Map controls" data-i18n-aria="mapControls">
               <button class="planet-map-theme-toggle" type="button" data-map-theme aria-pressed="false" title="Switch to night mode" aria-label="Switch to night mode"><span class="planet-map-theme-day" aria-hidden="true">☀</span><span class="planet-map-theme-night" aria-hidden="true">☾</span></button>
               <button type="button" data-map-zoom="in" title="Zoom in" aria-label="Zoom in">+</button>
@@ -144,7 +136,7 @@
               <button type="button" data-map-zoom="reset" title="Reset map" aria-label="Reset map">↺</button>
               <button type="button" data-map-fullscreen title="Enter fullscreen" aria-label="Enter fullscreen">⛶</button>
             </div>
-          </div>
+          </header>
           <div class="planet-map-stage" data-planet-map-stage>
             <div class="planet-map-coordinate" aria-hidden="true">
               <span>PD–01</span>
@@ -152,7 +144,7 @@
             </div>
             <svg class="planet-star-map" data-planet-map viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="planet-map-title planet-map-description">
               <title id="planet-map-title" data-i18n="mapTitle">Planet Diary star map</title>
-              <desc id="planet-map-description" data-i18n="mapDescription">A navigable map of 943 planets grouped into six spiral arms and twenty-four systems.</desc>
+              <desc id="planet-map-description" data-i18n="mapDescription">A navigable map of Planet Diary worlds grouped into spiral arms and systems.</desc>
               <g data-map-viewport></g>
             </svg>
             <div class="planet-map-tooltip" data-map-tooltip role="status" hidden></div>
