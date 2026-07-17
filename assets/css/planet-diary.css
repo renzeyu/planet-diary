@@ -20,6 +20,11 @@ body.planet-diary-template {
   min-width: 0;
 }
 
+.planet-catalog-identity h1 a {
+  color: inherit;
+  text-decoration: none;
+}
+
 .planet-catalog-tagline {
   max-width: 44rem;
   margin: 0.6rem 0 0;
@@ -62,7 +67,7 @@ body.planet-diary-template {
 
 .planet-focus-nav {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--gap);
   align-items: baseline;
   padding: 0.85rem 0;
@@ -80,6 +85,7 @@ body.planet-diary-template {
 .planet-focus-nav > span {
   color: var(--muted);
   font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
 .planet-language-switch {
@@ -113,8 +119,6 @@ body.planet-diary-template {
   border-bottom-color: currentColor;
 }
 
-.planet-catalog.is-planet-focused .planet-catalog-header,
-.planet-catalog.is-planet-focused .planet-catalog-tools,
 .planet-catalog.is-planet-focused .planet-load-more {
   display: none;
 }
@@ -483,8 +487,13 @@ body.planet-diary-template {
 }
 
 .planet-catalog-search {
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: center;
   width: min(16rem, 100%);
   min-width: 0;
+  border-bottom: 1px solid var(--line);
 }
 
 .planet-catalog-search input {
@@ -492,7 +501,6 @@ body.planet-diary-template {
   min-width: 0;
   height: 1.9rem;
   border: 0;
-  border-bottom: 1px solid var(--line);
   border-radius: 0;
   outline: 0;
   padding: 0;
@@ -501,13 +509,25 @@ body.planet-diary-template {
   font: inherit;
 }
 
+.planet-catalog-search-icon {
+  width: 0.9rem;
+  height: 0.9rem;
+  background: var(--muted);
+  -webkit-mask: url("../icons/search.svg") center / contain no-repeat;
+  mask: url("../icons/search.svg") center / contain no-repeat;
+}
+
 .planet-catalog-search input::placeholder {
   color: var(--muted);
   opacity: 1;
 }
 
-.planet-catalog-search input:focus {
+.planet-catalog-search:focus-within {
   border-bottom-color: var(--ink);
+}
+
+.planet-catalog-search:focus-within .planet-catalog-search-icon {
+  background: var(--ink);
 }
 
 .planet-filter-toggle {
@@ -568,12 +588,6 @@ body.planet-diary-template {
 .planet-catalog.is-about-view .planet-filter-form,
 .planet-catalog.is-today-view .planet-filter-form {
   display: none;
-}
-
-.planet-catalog.is-about-view .planet-catalog-actions,
-.planet-catalog.is-today-view .planet-catalog-actions {
-  visibility: hidden;
-  pointer-events: none;
 }
 
 .planet-view[hidden] {
@@ -2032,20 +2046,13 @@ a.planet-table-row:focus-visible {
 
   .planet-focus-nav {
     grid-template-columns: minmax(0, 1fr) auto;
-    row-gap: 0.55rem;
     padding: 0.75rem 0;
     font-size: 0.86rem;
   }
 
   .planet-focus-nav > span {
-    grid-column: 1 / 2;
-    grid-row: 2;
-  }
-
-  .planet-focus-nav .planet-language-switch {
     grid-column: 2;
-    grid-row: 1 / 3;
-    align-self: center;
+    grid-row: 1;
   }
 
   .planet-record-hero,

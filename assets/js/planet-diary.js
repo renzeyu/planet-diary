@@ -87,6 +87,7 @@
     filterToggle: root.querySelector("[data-planet-filter-toggle]"),
     filterCount: root.querySelector("[data-planet-filter-count]"),
     search: root.querySelector("[data-planet-search]"),
+    home: root.querySelector("[data-planet-home]"),
     year: root.querySelector("[data-planet-year]"),
     arm: root.querySelector("[data-planet-arm]"),
     system: root.querySelector("[data-planet-system]"),
@@ -95,6 +96,7 @@
     sort: root.querySelector("[data-planet-sort]"),
     reset: root.querySelector("[data-planet-reset]"),
     focusNav: root.querySelector("[data-planet-focus-nav]"),
+    focusBack: root.querySelector("[data-planet-focus-back]"),
     focusLabel: root.querySelector("[data-planet-focus-label]"),
     backToTop: root.querySelector("[data-planet-back-to-top]"),
     today: root.querySelector("[data-planet-today]"),
@@ -164,7 +166,7 @@
       results: "results",
       more: "More",
       detailNavigation: "Planet detail navigation",
-      backToCatalog: "← Planet Diary",
+      backToCatalog: "← All planets",
       planetaryRecord: "Planetary record",
       tableCatalog: "Planet Diary catalog",
       armLegend: "Spiral arm legend",
@@ -265,7 +267,7 @@
       results: "条结果",
       more: "更多",
       detailNavigation: "行星详情导航",
-      backToCatalog: "← 星球日记",
+      backToCatalog: "← 全部星球",
       planetaryRecord: "行星档案",
       tableCatalog: "星球日记目录",
       armLegend: "旋臂图例",
@@ -673,14 +675,16 @@
     nodes.backToTop.title = t("backToTop");
     nodes.backToTop.setAttribute("aria-label", t("backToTop"));
 
-    const backLink = root.querySelector("[data-planet-focus-back]");
-    if (backLink) {
-      backLink.textContent = t("backToCatalog");
-      backLink.href = state.language === "zh" ? "./?lang=zh" : "./";
+    if (nodes.home) {
+      nodes.home.href = state.language === "zh" ? "./?lang=zh" : "./";
+    }
+    if (nodes.focusBack) {
+      nodes.focusBack.textContent = t("backToCatalog");
+      nodes.focusBack.href = state.language === "zh" ? "./?view=detail&lang=zh" : "./?view=detail";
     }
     if (state.focusedId) {
       const entry = entriesById.get(state.focusedId);
-      nodes.focusLabel.textContent = `${t("planetaryRecord")} / #${entry.number}`;
+      nodes.focusLabel.textContent = `#${entry.number} · ${entryName(entry)}`;
     }
     syncFilterControls();
     syncDocumentTitle();
@@ -715,6 +719,34 @@
     nodes.mapViewport.innerHTML = "";
     renderCurrentView();
     if (update) updateUrl();
+  }
+
+  function leaveFocusedRecord() {
+    if (!state.focusedId) return false;
+    state.focusedId = null;
+    root.classList.remove("is-planet-focused");
+    document.body.classList.remove("is-planet-record");
+    nodes.focusNav.hidden = true;
+    return true;
+  }
+
+  function navigateToView(view) {
+    const leftRecord = leaveFocusedRecord();
+    if (["today", "about"].includes(view) && state.query) {
+      state.query = "";
+      nodes.search.value = "";
+      resetVisibleCounts();
+    }
+    setView(view);
+    if (leftRecord) window.scrollTo({ top: 0, behavior: "auto" });
+  }
+
+  function prepareCatalogControls() {
+    const shouldMoveToCards = state.focusedId || ["today", "about"].includes(state.view);
+    if (!shouldMoveToCards) return false;
+    leaveFocusedRecord();
+    setView("detail", { update: false, render: false });
+    return true;
   }
 
   function setView(view, { update = true, render = true } = {}) {
@@ -1821,6 +1853,7 @@
   }
 
   function handleFilterChange() {
+    prepareCatalogControls();
     state.query = nodes.search.value;
     state.year = nodes.year.value;
     state.arm = nodes.arm.value;
@@ -1869,7 +1902,7 @@
     });
 
     root.querySelectorAll("[data-planet-view]").forEach((button) => {
-      button.addEventListener("click", () => setView(button.dataset.planetView));
+      button.addEventListener("click", () => navigateToView(button.dataset.planetView));
       button.addEventListener("keydown", (event) => {
         if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
         event.preventDefault();
@@ -1877,12 +1910,25 @@
         const direction = event.key === "ArrowRight" ? 1 : -1;
         const next = tabs[(tabs.indexOf(button) + direction + tabs.length) % tabs.length];
         next.focus();
-        setView(next.dataset.planetView);
+        navigateToView(next.dataset.planetView);
       });
     });
 
     nodes.filterToggle.addEventListener("click", () => {
-      setFiltersOpen(!state.filtersOpen);
+      const movedToCards = prepareCatalogControls();
+      setFiltersOpen(movedToCards || !state.filtersOpen);
+      if (movedToCards) {
+        renderCurrentView();
+        updateUrl();
+        window.scrollTo({ top: 0, behavior: "auto" });
+      }
+    });
+
+    nodes.focusBack?.addEventListener("click", (event) => {
+      event.preventDefault();
+      leaveFocusedRecord();
+      setView("detail");
+      window.scrollTo({ top: 0, behavior: "auto" });
     });
 
     nodes.search.addEventListener("input", () => {

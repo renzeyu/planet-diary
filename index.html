@@ -18,7 +18,7 @@
     <main class="planet-catalog is-today-view">
       <header class="planet-catalog-header">
         <div class="planet-catalog-identity">
-          <h1 data-i18n="catalogTitle">Planet Diary</h1>
+          <h1><a href="./" data-planet-home data-i18n="catalogTitle">Planet Diary</a></h1>
           <p class="planet-catalog-tagline" data-i18n="catalogTagline">A new illustrated sci-fi world every day</p>
         </div>
         <div class="planet-catalog-summary">
@@ -44,6 +44,7 @@
         <div class="planet-catalog-actions">
           <label class="planet-catalog-search">
             <span class="visually-hidden" data-i18n="search">Search</span>
+            <span class="planet-catalog-search-icon" aria-hidden="true"></span>
             <input type="search" autocomplete="off" placeholder="Search" data-planet-search aria-label="Search names, stories, and properties" data-i18n-aria="searchAria">
           </label>
           <button class="planet-filter-toggle" type="button" data-planet-filter-toggle aria-expanded="false" aria-controls="planet-filter-panel">
@@ -104,12 +105,8 @@
       </section>
 
       <nav class="planet-focus-nav" data-planet-focus-nav aria-label="Planet detail navigation" data-i18n-aria="detailNavigation" hidden>
-        <a href="./" data-planet-focus-back>← Planet Diary</a>
+        <a href="./?view=detail" data-planet-focus-back>← All planets</a>
         <span data-planet-focus-label></span>
-        <div class="planet-language-switch" data-planet-language-switch role="group" aria-label="Language">
-          <button type="button" data-planet-language="en" aria-pressed="true">EN</button>
-          <button type="button" data-planet-language="zh" aria-pressed="false" lang="zh-Hans">中文</button>
-        </div>
       </nav>
 
       <section id="planet-today-view" class="planet-view" role="tabpanel" data-planet-panel="today">
