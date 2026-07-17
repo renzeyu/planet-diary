@@ -22,7 +22,7 @@ body.planet-diary-template {
 }
 
 .planet-catalog-identity h1 {
-  font-size: clamp(2.4rem, 5vw, 5rem);
+  font-size: clamp(2.4rem, 4vw, 4rem);
 }
 
 .planet-catalog-identity h1 a {
@@ -32,43 +32,27 @@ body.planet-diary-template {
 
 .planet-catalog-tagline {
   max-width: 44rem;
-  margin: 0.6rem 0 0;
+  margin: 0.45rem 0 0;
   color: var(--muted);
   font-size: 0.95rem;
   line-height: 1.35;
 }
 
-.planet-catalog-summary {
-  grid-column: 7 / 13;
-  grid-row: 2;
-  display: grid;
-  grid-template-columns: repeat(3, max-content);
-  gap: 1rem;
-  align-items: flex-end;
-  justify-content: flex-end;
-  min-width: 0;
-}
-
-.planet-catalog-summary p {
-  margin: 0;
-  color: var(--muted);
-  text-align: right;
-  font-size: 0.86rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.planet-catalog-author a {
-  color: var(--ink);
-}
-
 .planet-catalog-tools {
   grid-column: 5 / 13;
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: var(--gap);
+  display: flex;
   align-items: center;
+  justify-content: flex-end;
   min-width: 0;
   padding-top: 0.35rem;
+}
+
+.planet-primary-nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
 }
 
 .planet-focus-nav {
@@ -395,9 +379,8 @@ body.planet-diary-template {
 }
 
 .planet-view-tabs {
-  grid-column: 1 / 13;
   display: flex;
-  gap: 1.25rem;
+  gap: 1.15rem;
   justify-content: flex-end;
 }
 
@@ -432,7 +415,7 @@ body.planet-diary-template {
 
 .planet-filter-form {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr)) max-content;
+  grid-template-columns: repeat(8, minmax(0, 1fr)) max-content;
   gap: var(--gap);
   align-items: end;
   padding: 0.75rem 0 1rem;
@@ -482,58 +465,9 @@ body.planet-diary-template {
   border-bottom: 1px solid currentColor;
 }
 
-.planet-catalog-actions {
-  grid-column: 1 / 7;
-  grid-row: 2;
-  display: flex;
-  gap: 0.85rem;
-  align-items: center;
-  justify-content: flex-end;
-  min-width: 0;
-}
-
 .planet-catalog-search {
-  display: grid;
-  grid-template-columns: 1rem minmax(0, 1fr);
-  gap: 0.55rem;
-  align-items: center;
-  width: min(16rem, 100%);
+  grid-column: span 2;
   min-width: 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.planet-catalog-search input {
-  width: 100%;
-  min-width: 0;
-  height: 1.9rem;
-  border: 0;
-  border-radius: 0;
-  outline: 0;
-  padding: 0;
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-}
-
-.planet-catalog-search-icon {
-  width: 0.9rem;
-  height: 0.9rem;
-  background: var(--muted);
-  -webkit-mask: url("../icons/search.svg") center / contain no-repeat;
-  mask: url("../icons/search.svg") center / contain no-repeat;
-}
-
-.planet-catalog-search input::placeholder {
-  color: var(--muted);
-  opacity: 1;
-}
-
-.planet-catalog-search:focus-within {
-  border-bottom-color: var(--ink);
-}
-
-.planet-catalog-search:focus-within .planet-catalog-search-icon {
-  background: var(--ink);
 }
 
 .planet-filter-toggle {
@@ -566,8 +500,8 @@ body.planet-diary-template {
   width: 1.05rem;
   height: 1.05rem;
   background: currentColor;
-  -webkit-mask: url("../icons/filter.svg") center / contain no-repeat;
-  mask: url("../icons/filter.svg") center / contain no-repeat;
+  -webkit-mask: url("../icons/search.svg") center / contain no-repeat;
+  mask: url("../icons/search.svg") center / contain no-repeat;
 }
 
 .planet-filter-count {
@@ -588,11 +522,6 @@ body.planet-diary-template {
 }
 
 .planet-filter-count[hidden] {
-  display: none;
-}
-
-.planet-catalog.is-about-view .planet-filter-form,
-.planet-catalog.is-today-view .planet-filter-form {
   display: none;
 }
 
@@ -2022,33 +1951,13 @@ a.planet-table-row:focus-visible {
   }
 
   .planet-catalog-header h1 {
-    font-size: clamp(2.8rem, 14vw, 4.6rem);
+    font-size: clamp(2.6rem, 12vw, 4rem);
   }
 
   .planet-catalog-tagline {
     max-width: 30rem;
     margin-top: 0.35rem;
     font-size: 0.9rem;
-  }
-
-  .planet-catalog-summary {
-    grid-column: 1 / 5;
-    grid-row: 1;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    gap: 0.75rem;
-    align-items: end;
-    justify-content: stretch;
-    width: 100%;
-    min-width: 0;
-  }
-
-  .planet-catalog-summary p {
-    grid-column: auto;
-  }
-
-  .planet-catalog-author {
-    justify-self: start;
   }
 
   .planet-focus-nav {
@@ -2181,14 +2090,20 @@ a.planet-table-row:focus-visible {
 
   .planet-catalog-tools {
     grid-column: 1 / 5;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    row-gap: 0.65rem;
+    display: block;
     padding-top: 0.1rem;
   }
 
+  .planet-primary-nav {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 0.55rem 0.75rem;
+    width: 100%;
+  }
+
   .planet-view-tabs {
-    grid-column: 1 / 5;
-    grid-row: 2;
+    grid-column: 1 / 4;
+    grid-row: 1;
     display: flex;
     gap: 0.5rem;
     justify-content: space-between;
@@ -2196,14 +2111,16 @@ a.planet-table-row:focus-visible {
     font-size: 0.86rem;
   }
 
-  .planet-catalog-actions {
-    grid-column: 1 / 5;
-    grid-row: 3;
+  .planet-primary-nav > .planet-language-switch {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
   }
 
-  .planet-catalog-search {
-    flex: 1 1 auto;
-    width: auto;
+  .planet-primary-nav > .planet-filter-toggle {
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: end;
   }
 
   .planet-about {

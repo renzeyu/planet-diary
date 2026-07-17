@@ -145,7 +145,7 @@
       contact: "Contact",
       contactNote: "For publishing, exhibitions, translation, and other inquiries.",
       supportProject: "♥ Support Planet Diary ↗",
-      filters: "Filters",
+      filters: "Search and filters",
       search: "Search",
       searchAria: "Search names, stories, and properties",
       year: "Year",
@@ -246,7 +246,7 @@
       contact: "联系",
       contactNote: "出版、展览、翻译及其他合作事宜。",
       supportProject: "♥ 支持《星球日记》↗",
-      filters: "筛选",
+      filters: "搜索与筛选",
       search: "搜索",
       searchAria: "搜索名称、故事与属性",
       year: "年份",
@@ -604,6 +604,7 @@
 
   function activeFilterCount() {
     return [
+      Boolean(state.query),
       state.year !== "all",
       state.arm !== "all",
       state.system !== "all",
@@ -1915,13 +1916,7 @@
     });
 
     nodes.filterToggle.addEventListener("click", () => {
-      const movedToCards = prepareCatalogControls();
-      setFiltersOpen(movedToCards || !state.filtersOpen);
-      if (movedToCards) {
-        renderCurrentView();
-        updateUrl();
-        window.scrollTo({ top: 0, behavior: "auto" });
-      }
+      setFiltersOpen(!state.filtersOpen);
     });
 
     nodes.focusBack?.addEventListener("click", (event) => {

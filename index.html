@@ -22,41 +22,34 @@
           <p class="planet-catalog-tagline" data-i18n="catalogTagline">A new illustrated sci-fi world every day</p>
         </div>
         <section class="planet-catalog-tools" aria-label="Planet Diary controls" data-i18n-aria="catalogControls">
-          <div class="planet-view-tabs" role="tablist" aria-label="View Planet Diary as" data-i18n-aria="viewAs">
-            <button type="button" role="tab" aria-selected="true" aria-controls="planet-today-view" data-planet-view="today" data-i18n="today">Today</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="planet-detail-view" data-planet-view="detail" data-i18n="cards">Cards</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="planet-gallery-view" data-planet-view="gallery" data-i18n="gallery">Gallery</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="planet-list-view" data-planet-view="list" data-i18n="list">List</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="planet-map-view" data-planet-view="map" data-i18n="starMap">Star Map</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="planet-about-view" data-planet-view="about" data-i18n="about">About</button>
-          </div>
-
-          <div class="planet-catalog-actions">
-            <label class="planet-catalog-search">
-              <span class="visually-hidden" data-i18n="search">Search</span>
-              <span class="planet-catalog-search-icon" aria-hidden="true"></span>
-              <input type="search" autocomplete="off" placeholder="Search" data-planet-search aria-label="Search names, stories, and properties" data-i18n-aria="searchAria">
-            </label>
-            <button class="planet-filter-toggle" type="button" data-planet-filter-toggle aria-expanded="false" aria-controls="planet-filter-panel">
-              <span class="planet-filter-icon" aria-hidden="true"></span>
-              <span class="planet-filter-count" data-planet-filter-count hidden></span>
-              <span class="visually-hidden" data-i18n="filters">Filters</span>
-            </button>
-            <p class="planet-result-count visually-hidden" data-planet-result-count aria-live="polite">943 results</p>
-          </div>
-
-          <div class="planet-catalog-summary">
-            <p class="planet-catalog-author"><a href="https://zeyuren.com/">Rofix ↗</a></p>
-            <p class="planet-catalog-years">2016–2024</p>
+          <div class="planet-primary-nav">
+            <div class="planet-view-tabs" role="tablist" aria-label="View Planet Diary as" data-i18n-aria="viewAs">
+              <button type="button" role="tab" aria-selected="true" aria-controls="planet-today-view" data-planet-view="today" data-i18n="today">Today</button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="planet-detail-view" data-planet-view="detail" data-i18n="cards">Cards</button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="planet-gallery-view" data-planet-view="gallery" data-i18n="gallery">Gallery</button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="planet-list-view" data-planet-view="list" data-i18n="list">List</button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="planet-map-view" data-planet-view="map" data-i18n="starMap">Star Map</button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="planet-about-view" data-planet-view="about" data-i18n="about">About</button>
+            </div>
             <div class="planet-language-switch" data-planet-language-switch role="group" aria-label="Language">
               <button type="button" data-planet-language="en" aria-pressed="true">EN</button>
               <button type="button" data-planet-language="zh" aria-pressed="false" lang="zh-Hans">中文</button>
             </div>
+            <button class="planet-filter-toggle" type="button" data-planet-filter-toggle aria-expanded="false" aria-controls="planet-filter-panel">
+              <span class="planet-filter-icon" aria-hidden="true"></span>
+              <span class="planet-filter-count" data-planet-filter-count hidden></span>
+              <span class="visually-hidden" data-i18n="filters">Search and filters</span>
+            </button>
+            <p class="planet-result-count visually-hidden" data-planet-result-count aria-live="polite">943 results</p>
           </div>
         </section>
       </header>
 
       <form id="planet-filter-panel" class="planet-filter-form" data-planet-filters onsubmit="return false" hidden>
+          <label class="planet-catalog-search">
+            <span data-i18n="search">Search</span>
+            <input type="search" autocomplete="off" placeholder="Search" data-planet-search aria-label="Search names, stories, and properties" data-i18n-aria="searchAria">
+          </label>
           <label>
             <span data-i18n="year">Year</span>
             <select data-planet-year aria-label="Filter by year">
