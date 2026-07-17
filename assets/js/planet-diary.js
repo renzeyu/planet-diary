@@ -257,7 +257,7 @@
       viewAs: "星球日记视图",
       today: "今日",
       cards: "卡片",
-      todayFeature: "同日星球",
+      todayFeature: "今日星球",
       nearestFeature: "最近存档日期",
       otherOnThisDay: "同日其他星球",
       relatedPlanets: "相关星球",
