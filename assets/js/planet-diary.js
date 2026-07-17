@@ -125,6 +125,8 @@
       cards: "Cards",
       todayFeature: "On This Day",
       nearestFeature: "Nearest Archive Date",
+      otherOnThisDay: "Also on this day",
+      relatedPlanets: "Related planets",
       gallery: "Gallery",
       list: "List",
       starMap: "Star Map",
@@ -226,6 +228,8 @@
       cards: "卡片",
       todayFeature: "同日星球",
       nearestFeature: "最近存档日期",
+      otherOnThisDay: "同日其他星球",
+      relatedPlanets: "相关星球",
       gallery: "图库",
       list: "列表",
       starMap: "星图",
@@ -867,6 +871,7 @@
   function todayMarkup(feature) {
     const { entry, exact, todayKey } = feature;
     const images = entry.images || [];
+    const companions = todayCompanions(feature);
     return `
       <article class="planet-record planet-today-record" style="${armStyle(entry.armId)}" aria-labelledby="planet-today-feature-${escapeHtml(entry.id)}">
         <section class="planet-record-hero">
@@ -912,7 +917,36 @@
           </figure>
         </section>
       </article>
+      ${companions.items.length ? `
+        <section class="planet-today-companions" aria-labelledby="planet-today-companions-${escapeHtml(entry.id)}">
+          <header class="planet-today-companions-header">
+            <h2 id="planet-today-companions-${escapeHtml(entry.id)}">${t(companions.labelKey)}</h2>
+            <span>(${companions.items.length})</span>
+          </header>
+          <div class="planet-gallery planet-today-gallery">
+            ${companions.items.map(galleryMarkup).join("")}
+          </div>
+        </section>
+      ` : ""}
     `;
+  }
+
+  function todayCompanions(feature) {
+    const monthDay = feature.todayKey.slice(5);
+    const sameDay = entries
+      .filter((entry) => entry.id !== feature.entry.id && String(entry.date || "").slice(5) === monthDay)
+      .sort((left, right) => String(right.date).localeCompare(String(left.date)) || left.number - right.number);
+    if (sameDay.length) return { items: sameDay, labelKey: "otherOnThisDay" };
+
+    const related = (feature.entry.relatedIds || [])
+      .map((id) => entriesById.get(id))
+      .filter(Boolean);
+    if (related.length) return { items: related, labelKey: "relatedPlanets" };
+
+    const sameSystem = entries
+      .filter((entry) => entry.id !== feature.entry.id && entry.systemId === feature.entry.systemId)
+      .slice(0, 4);
+    return { items: sameSystem, labelKey: "relatedPlanets" };
   }
 
   function focusedDetailMarkup(entry) {
