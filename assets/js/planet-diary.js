@@ -937,9 +937,9 @@
           aria-pressed="${liked}"
           aria-busy="${!Number.isFinite(count)}"
           aria-label="${escapeHtml(likeButtonLabel(entry, liked, count))}"
+          title="${escapeHtml(likeButtonLabel(entry, liked, count))}"
         >
           <span class="planet-record-action-icon is-heart" aria-hidden="true"></span>
-          <span data-planet-action-label>${t(liked ? "liked" : "like")}</span>
           <span class="planet-record-like-count" data-planet-like-count>${Number.isFinite(count) ? escapeHtml(formatLikeCount(count)) : "—"}</span>
         </button>
         <button
@@ -947,9 +947,10 @@
           type="button"
           data-planet-share="${escapeHtml(entry.id)}"
           aria-label="${escapeHtml(`${t("sharePlanet")} ${name}`)}"
+          title="${escapeHtml(`${t("sharePlanet")} ${name}`)}"
         >
           <span class="planet-record-action-icon is-share" aria-hidden="true"></span>
-          <span data-planet-action-label aria-live="polite">${t("share")}</span>
+          <span class="visually-hidden" data-planet-share-status aria-live="polite"></span>
         </button>
       </div>
     `;
@@ -2079,9 +2080,9 @@
     button.classList.toggle("is-liked", liked);
     button.setAttribute("aria-pressed", String(liked));
     button.setAttribute("aria-busy", "false");
-    button.setAttribute("aria-label", likeButtonLabel(entry, liked, count));
-    const label = button.querySelector("[data-planet-action-label]");
-    if (label) label.textContent = t(liked ? "liked" : "like");
+    const actionLabel = likeButtonLabel(entry, liked, count);
+    button.setAttribute("aria-label", actionLabel);
+    button.setAttribute("title", actionLabel);
     const countNode = button.querySelector("[data-planet-like-count]");
     if (countNode) countNode.textContent = Number.isFinite(count) ? formatLikeCount(count) : "—";
   }
@@ -2233,16 +2234,18 @@
   }
 
   function showShareConfirmation(button, entry) {
-    const label = button.querySelector("[data-planet-action-label]");
-    if (!label) return;
+    const status = button.querySelector("[data-planet-share-status]");
     window.clearTimeout(Number(button.dataset.shareTimer || 0));
     button.classList.add("is-confirmed");
-    label.textContent = t("linkCopied");
+    if (status) status.textContent = t("linkCopied");
     button.setAttribute("aria-label", t("linkCopied"));
+    button.setAttribute("title", t("linkCopied"));
     const timer = window.setTimeout(() => {
+      const actionLabel = `${t("sharePlanet")} ${entryName(entry)}`;
       button.classList.remove("is-confirmed");
-      label.textContent = t("share");
-      button.setAttribute("aria-label", `${t("sharePlanet")} ${entryName(entry)}`);
+      if (status) status.textContent = "";
+      button.setAttribute("aria-label", actionLabel);
+      button.setAttribute("title", actionLabel);
       delete button.dataset.shareTimer;
     }, 1800);
     button.dataset.shareTimer = String(timer);

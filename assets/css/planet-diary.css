@@ -255,12 +255,13 @@ body.planet-diary-template {
 }
 
 .planet-record-like {
-  width: 6.8rem;
+  width: 4rem;
   justify-content: center;
 }
 
 .planet-record-share {
-  width: 5.5rem;
+  width: 2.15rem;
+  padding: 0;
   justify-content: center;
 }
 
@@ -276,7 +277,7 @@ body.planet-diary-template {
 .planet-record-like-count {
   min-width: 2ch;
   border-left: 1px solid currentColor;
-  padding-left: 0.42rem;
+  padding-left: 0.35rem;
   color: currentColor;
   font-variant-numeric: tabular-nums;
   text-align: right;
