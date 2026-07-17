@@ -212,6 +212,75 @@ body.planet-diary-template {
   border-bottom: 1px solid currentColor;
 }
 
+.planet-record-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+}
+
+.planet-record-action {
+  display: inline-flex;
+  gap: 0.42rem;
+  align-items: center;
+  min-height: 2.15rem;
+  border: 1px solid var(--line);
+  padding: 0.38rem 0.65rem;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.78rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.planet-record-action:hover,
+.planet-record-action:focus-visible {
+  border-color: var(--ink);
+}
+
+.planet-record-action:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.planet-record-action.is-liked {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.planet-record-action.is-confirmed {
+  border-color: var(--ink);
+}
+
+.planet-record-like {
+  width: 5rem;
+  justify-content: center;
+}
+
+.planet-record-share {
+  width: 5.5rem;
+  justify-content: center;
+}
+
+.planet-record-action-icon {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex: 0 0 auto;
+  background: currentColor;
+}
+
+.planet-record-action-icon.is-heart {
+  -webkit-mask: url("../icons/heart.svg") center / contain no-repeat;
+  mask: url("../icons/heart.svg") center / contain no-repeat;
+}
+
+.planet-record-action-icon.is-share {
+  -webkit-mask: url("../icons/share-2.svg") center / contain no-repeat;
+  mask: url("../icons/share-2.svg") center / contain no-repeat;
+}
+
 .planet-record-key-facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

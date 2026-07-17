@@ -52,6 +52,14 @@
       return null;
     }
   })();
+  const likedPlanetIds = (() => {
+    try {
+      const stored = JSON.parse(window.localStorage.getItem("planetDiaryLikedPlanets") || "[]");
+      return new Set(Array.isArray(stored) ? stored.map(String) : []);
+    } catch (_) {
+      return new Set();
+    }
+  })();
   const requestedLanguage = url.searchParams.get("lang");
   const initialLanguage = ["en", "zh"].includes(requestedLanguage)
     ? requestedLanguage
@@ -209,6 +217,14 @@
       plate: "Plate",
       story: "Story",
       source: "Source ↗",
+      planetActions: "Planet actions",
+      like: "Like",
+      liked: "Liked",
+      likePlanet: "Like planet",
+      unlikePlanet: "Remove like from planet",
+      share: "Share",
+      sharePlanet: "Share planet",
+      linkCopied: "Copied",
       worldProfile: "World profile",
       relatedWorlds: "Related worlds",
       englishName: "Name",
@@ -312,6 +328,14 @@
       plate: "图版",
       story: "故事",
       source: "原文 ↗",
+      planetActions: "星球操作",
+      like: "喜欢",
+      liked: "已喜欢",
+      likePlanet: "喜欢这颗星球",
+      unlikePlanet: "取消喜欢这颗星球",
+      share: "分享",
+      sharePlanet: "分享这颗星球",
+      linkCopied: "已复制",
       worldProfile: "行星档案",
       relatedWorlds: "相关星球",
       englishName: "名称",
@@ -845,6 +869,34 @@
     `;
   }
 
+  function planetActionsMarkup(entry) {
+    const liked = likedPlanetIds.has(String(entry.id));
+    const name = entryName(entry);
+    return `
+      <div class="planet-record-actions" role="group" aria-label="${escapeHtml(t("planetActions"))}">
+        <button
+          class="planet-record-action planet-record-like${liked ? " is-liked" : ""}"
+          type="button"
+          data-planet-like="${escapeHtml(entry.id)}"
+          aria-pressed="${liked}"
+          aria-label="${escapeHtml(`${t(liked ? "unlikePlanet" : "likePlanet")} ${name}`)}"
+        >
+          <span class="planet-record-action-icon is-heart" aria-hidden="true"></span>
+          <span data-planet-action-label>${t(liked ? "liked" : "like")}</span>
+        </button>
+        <button
+          class="planet-record-action planet-record-share"
+          type="button"
+          data-planet-share="${escapeHtml(entry.id)}"
+          aria-label="${escapeHtml(`${t("sharePlanet")} ${name}`)}"
+        >
+          <span class="planet-record-action-icon is-share" aria-hidden="true"></span>
+          <span data-planet-action-label aria-live="polite">${t("share")}</span>
+        </button>
+      </div>
+    `;
+  }
+
   function detailMarkup(entry) {
     const related = (entry.relatedIds || []).map((id) => entriesById.get(id)).filter(Boolean);
     const name = state.focusedId === entry.id
@@ -991,6 +1043,7 @@
                 <span>${escapeHtml(displayDate(entry.date))}</span>
                 ${entry.sourceUrl ? `<a href="${escapeHtml(entry.sourceUrl)}" target="_blank" rel="noopener noreferrer">${t("source")}</a>` : ""}
               </div>
+              ${planetActionsMarkup(entry)}
             </div>
 
             <dl class="planet-record-key-facts">
@@ -1944,7 +1997,114 @@
     backToTopFrame = window.requestAnimationFrame(syncBackToTop);
   }
 
+  function persistLikedPlanets() {
+    try {
+      window.localStorage.setItem("planetDiaryLikedPlanets", JSON.stringify([...likedPlanetIds]));
+    } catch (_) {
+      // The current page still reflects the choice when storage is unavailable.
+    }
+  }
+
+  function syncLikeButton(button, entry) {
+    const liked = likedPlanetIds.has(String(entry.id));
+    button.classList.toggle("is-liked", liked);
+    button.setAttribute("aria-pressed", String(liked));
+    button.setAttribute("aria-label", `${t(liked ? "unlikePlanet" : "likePlanet")} ${entryName(entry)}`);
+    const label = button.querySelector("[data-planet-action-label]");
+    if (label) label.textContent = t(liked ? "liked" : "like");
+  }
+
+  function togglePlanetLike(button) {
+    const entry = entriesById.get(button.dataset.planetLike);
+    if (!entry) return;
+    const id = String(entry.id);
+    if (likedPlanetIds.has(id)) likedPlanetIds.delete(id);
+    else likedPlanetIds.add(id);
+    persistLikedPlanets();
+    syncLikeButton(button, entry);
+  }
+
+  function shareUrlFor(entry) {
+    const shareUrl = new URL(window.location.href);
+    shareUrl.search = "";
+    shareUrl.searchParams.set("planet", entry.id);
+    if (state.language === "zh") shareUrl.searchParams.set("lang", "zh");
+    shareUrl.hash = "";
+    return shareUrl.href;
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const field = document.createElement("textarea");
+    field.value = text;
+    field.setAttribute("readonly", "");
+    field.style.position = "fixed";
+    field.style.opacity = "0";
+    document.body.appendChild(field);
+    field.select();
+    const copied = document.execCommand("copy");
+    field.remove();
+    if (!copied) throw new Error("Copy command was unavailable");
+  }
+
+  function showShareConfirmation(button, entry) {
+    const label = button.querySelector("[data-planet-action-label]");
+    if (!label) return;
+    window.clearTimeout(Number(button.dataset.shareTimer || 0));
+    button.classList.add("is-confirmed");
+    label.textContent = t("linkCopied");
+    button.setAttribute("aria-label", t("linkCopied"));
+    const timer = window.setTimeout(() => {
+      button.classList.remove("is-confirmed");
+      label.textContent = t("share");
+      button.setAttribute("aria-label", `${t("sharePlanet")} ${entryName(entry)}`);
+      delete button.dataset.shareTimer;
+    }, 1800);
+    button.dataset.shareTimer = String(timer);
+  }
+
+  async function sharePlanet(button) {
+    const entry = entriesById.get(button.dataset.planetShare);
+    if (!entry) return;
+    const story = entryStory(entry).trim().replace(/\s+/g, " ");
+    const storyPreview = state.language === "zh"
+      ? `${story.slice(0, 64)}${story.length > 64 ? "…" : ""}`
+      : story.split(" ").slice(0, 24).join(" ");
+    const shareData = {
+      title: `${entryName(entry)} — ${t("catalogTitle")}`,
+      text: entryTagline(entry) || storyPreview,
+      url: shareUrlFor(entry)
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+      }
+    }
+    try {
+      await copyText(shareData.url);
+      showShareConfirmation(button, entry);
+    } catch (_) {
+      window.prompt(t("sharePlanet"), shareData.url);
+    }
+  }
+
   function bindEvents() {
+    root.addEventListener("click", (event) => {
+      const likeButton = event.target.closest("[data-planet-like]");
+      if (likeButton) {
+        togglePlanetLike(likeButton);
+        return;
+      }
+      const shareButton = event.target.closest("[data-planet-share]");
+      if (shareButton) sharePlanet(shareButton);
+    });
+
     root.querySelectorAll("[data-planet-language]").forEach((button) => {
       button.addEventListener("click", () => setLanguage(button.dataset.planetLanguage));
     });
