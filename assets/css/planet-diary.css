@@ -415,11 +415,19 @@ body.planet-diary-template {
 
 .planet-filter-form {
   display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr)) max-content;
-  gap: var(--gap);
+  grid-template-columns: minmax(11rem, 2fr) repeat(6, minmax(6.5rem, 1fr)) max-content;
+  gap: clamp(0.55rem, 1vw, var(--gap));
   align-items: end;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
   padding: 0.75rem 0 1rem;
   border-bottom: 1px solid var(--line);
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+
+.planet-filter-form::-webkit-scrollbar {
+  display: none;
 }
 
 .planet-filter-form[hidden] {
@@ -466,7 +474,6 @@ body.planet-diary-template {
 }
 
 .planet-catalog-search {
-  grid-column: span 2;
   min-width: 0;
 }
 
@@ -1912,17 +1919,33 @@ a.planet-table-row:focus-visible {
   .planet-record-properties {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-  .planet-filter-form {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .planet-filter-reset {
-    justify-self: start;
-  }
 }
 
 @media (max-width: 900px) {
+  .planet-primary-nav {
+    gap: 0.65rem;
+  }
+
+  .planet-view-tabs {
+    gap: 0.72rem;
+    font-size: 0.82rem;
+  }
+
+  .planet-language-switch {
+    gap: 0.42rem;
+    font-size: 0.72rem;
+  }
+
+  .planet-filter-toggle {
+    width: 1.55rem;
+    height: 1.55rem;
+  }
+
+  .planet-filter-form {
+    grid-template-columns: minmax(9rem, 1.6fr) repeat(6, minmax(5.8rem, 1fr)) max-content;
+    gap: 0.55rem;
+  }
+
   .planet-gallery {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -2090,37 +2113,37 @@ a.planet-table-row:focus-visible {
 
   .planet-catalog-tools {
     grid-column: 1 / 5;
-    display: block;
+    display: flex;
+    justify-content: flex-end;
     padding-top: 0.1rem;
   }
 
   .planet-primary-nav {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    gap: 0.55rem 0.75rem;
+    display: flex;
+    gap: clamp(0.32rem, 1.8vw, 0.65rem);
+    align-items: center;
+    justify-content: flex-end;
     width: 100%;
+    white-space: nowrap;
   }
 
   .planet-view-tabs {
-    grid-column: 1 / 4;
-    grid-row: 1;
     display: flex;
-    gap: 0.5rem;
-    justify-content: space-between;
+    gap: clamp(0.24rem, 1.55vw, 0.55rem);
+    justify-content: flex-end;
     min-width: 0;
-    font-size: 0.86rem;
+    font-size: clamp(0.66rem, 2.7vw, 0.8rem);
   }
 
   .planet-primary-nav > .planet-language-switch {
-    grid-column: 2;
-    grid-row: 2;
-    justify-self: end;
+    gap: clamp(0.18rem, 0.9vw, 0.35rem);
+    flex: 0 0 auto;
+    font-size: clamp(0.64rem, 2.45vw, 0.72rem);
   }
 
   .planet-primary-nav > .planet-filter-toggle {
-    grid-column: 3;
-    grid-row: 2;
-    justify-self: end;
+    width: clamp(1.2rem, 5vw, 1.5rem);
+    height: clamp(1.2rem, 5vw, 1.5rem);
   }
 
   .planet-about {
@@ -2205,13 +2228,13 @@ a.planet-table-row:focus-visible {
   }
 
   .planet-filter-form {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem 1rem;
+    grid-template-columns: 9rem repeat(6, 5.8rem) max-content;
+    gap: 0.55rem;
     padding: 0.75rem 0 1rem;
   }
 
   .planet-filter-reset {
-    justify-self: start;
+    justify-self: auto;
   }
 
   .planet-today-feature {
