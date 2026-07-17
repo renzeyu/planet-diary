@@ -231,7 +231,6 @@
       originalIllustrations: "original illustrations",
       plate: "Plate",
       story: "Story",
-      source: "Source ↗",
       planetActions: "Planet actions",
       like: "Like",
       liked: "Liked",
@@ -343,7 +342,6 @@
       originalIllustrations: "幅原作插画",
       plate: "图版",
       story: "故事",
-      source: "原文 ↗",
       planetActions: "星球操作",
       like: "喜欢",
       liked: "已喜欢",
@@ -970,10 +968,11 @@
         ${detailImages(entry)}
         <div class="planet-detail-copy" lang="${languageAttribute()}">
           <p class="planet-detail-story">${escapeHtml(entryStory(entry) || "")}</p>
-          <div class="planet-detail-links">
-            ${related.map((item) => `<a href="${escapeHtml(planetHref(item.id))}">${escapeHtml(entryName(item))}</a>`).join("")}
-            ${entry.sourceUrl ? `<a href="${escapeHtml(entry.sourceUrl)}" target="_blank" rel="noopener noreferrer">LOFTER ↗</a>` : ""}
-          </div>
+          ${related.length ? `
+            <div class="planet-detail-links">
+              ${related.map((item) => `<a href="${escapeHtml(planetHref(item.id))}">${escapeHtml(entryName(item))}</a>`).join("")}
+            </div>
+          ` : ""}
         </div>
       </article>
     `;
@@ -1100,7 +1099,6 @@
               <p class="planet-record-hero-story-text" lang="${languageAttribute()}">${escapeHtml(entryStory(entry) || entryTagline(entry) || "")}</p>
               <div class="planet-record-hero-story-meta">
                 <span>${escapeHtml(displayDate(entry.date))}</span>
-                ${entry.sourceUrl ? `<a href="${escapeHtml(entry.sourceUrl)}" target="_blank" rel="noopener noreferrer">${t("source")}</a>` : ""}
               </div>
               ${planetActionsMarkup(entry)}
             </div>
