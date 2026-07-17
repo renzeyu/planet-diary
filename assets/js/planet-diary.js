@@ -974,7 +974,6 @@
         ${header("arm", "planet-table-arm", t("spiralArm"))}
         ${header("system", "planet-table-system", t("system"))}
         ${header("world", "planet-table-class", t("world"))}
-        ${header("habitability", "planet-table-habitability", t("hab"))}
         ${header("synopsis", "planet-table-synopsis", t("synopsis"))}
       </div>
     `;
@@ -989,7 +988,6 @@
         <span class="planet-table-arm" role="cell">${escapeHtml(definitionLabel("arms", entry.armId, state.language))}</span>
         <span class="planet-table-system" role="cell">${escapeHtml(definitionLabel("systems", entry.systemId, state.language))}</span>
         <span class="planet-table-class" role="cell">${escapeHtml(definitionLabel("planetClasses", entry.planetClassId, state.language))}</span>
-        <span class="planet-table-habitability" role="cell">${escapeHtml(entry.habitability)}</span>
         <span class="planet-table-synopsis" role="cell" lang="${languageAttribute()}">${escapeHtml(entryTagline(entry) || "—")}</span>
       </a>
     `;
