@@ -964,15 +964,8 @@
           <span>02</span>
           <h2>${t("relatedWorlds")}</h2>
         </header>
-        <div class="planet-record-related-list">
-          ${related.map((item) => `
-            <a href="${escapeHtml(planetHref(item.id))}">
-              <span class="planet-record-related-number">#${item.number}</span>
-              <strong lang="${languageAttribute()}">${escapeHtml(entryName(item))}</strong>
-              <span>${escapeHtml(definitionLabel("systems", item.systemId, state.language))}</span>
-              <span>${escapeHtml(displayDate(item.date))}</span>
-            </a>
-          `).join("")}
+        <div class="planet-gallery planet-record-related-gallery">
+          ${related.map(galleryMarkup).join("")}
         </div>
       </section>
     ` : "";
