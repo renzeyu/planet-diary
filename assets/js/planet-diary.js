@@ -317,16 +317,19 @@
     }
   };
 
+  const initialMapScale = window.matchMedia("(max-width: 640px)").matches ? 1.25 : 1;
   const mapState = {
     built: false,
-    scale: 1,
-    x: 0,
-    y: 0,
-    targetScale: 1,
-    targetX: 0,
-    targetY: 0,
+    scale: initialMapScale,
+    x: 800 * (1 - initialMapScale),
+    y: 450 * (1 - initialMapScale),
+    targetScale: initialMapScale,
+    targetX: 800 * (1 - initialMapScale),
+    targetY: 450 * (1 - initialMapScale),
     animationFrame: null,
     drag: null,
+    pointers: new Map(),
+    pinch: null,
     suppressCanvasClick: false
   };
   let searchTimer;
@@ -1398,7 +1401,7 @@
       const scale = entry.habitability === "A" ? 1.05 : entry.habitability === "B" ? 0.9 : entry.habitability === "C" ? 0.72 : 0.58;
       return `
         <g class="planet-map-node" data-map-node="${entry.id}" transform="translate(${point.x.toFixed(1)} ${point.y.toFixed(1)})" tabindex="0" role="button" aria-label="#${entry.number} ${escapeHtml(entryName(entry))}">
-          <circle class="planet-map-node-hit" r="10"></circle>
+          <circle class="planet-map-node-hit" r="16"></circle>
           <circle class="planet-map-node-ring" r="7"></circle>
           <path class="planet-map-node-marker" transform="scale(${scale})" d="M 0 -5 L 1.12 -1.55 L 4.76 -1.55 L 1.82 0.59 L 2.94 4.05 L 0 1.91 L -2.94 4.05 L -1.82 0.59 L -4.76 -1.55 L -1.12 -1.55 Z"></path>
         </g>
@@ -1604,9 +1607,22 @@
     scheduleMapAnimation();
   }
 
+  function mapIsMobile() {
+    return window.matchMedia("(max-width: 640px)").matches;
+  }
+
+  function defaultMapTransform() {
+    const scale = mapIsMobile() ? 1.25 : 1;
+    return {
+      scale,
+      x: 800 * (1 - scale),
+      y: 450 * (1 - scale)
+    };
+  }
+
   function zoomMap(multiplier, anchor = { x: 800, y: 450 }) {
     const oldScale = mapState.targetScale;
-    const nextScale = Math.max(0.65, Math.min(16, oldScale * multiplier));
+    const nextScale = Math.max(mapIsMobile() ? 1 : 0.65, Math.min(16, oldScale * multiplier));
     const ratio = nextScale / oldScale;
     mapState.targetX = anchor.x - (anchor.x - mapState.targetX) * ratio;
     mapState.targetY = anchor.y - (anchor.y - mapState.targetY) * ratio;
@@ -1615,9 +1631,10 @@
   }
 
   function resetMap() {
-    mapState.targetScale = 1;
-    mapState.targetX = 0;
-    mapState.targetY = 0;
+    const next = defaultMapTransform();
+    mapState.targetScale = next.scale;
+    mapState.targetX = next.x;
+    mapState.targetY = next.y;
     scheduleMapAnimation();
   }
 
@@ -1666,12 +1683,55 @@
     }
   }
 
-  function mapCoordinatesFromPointer(event) {
+  function mapCoordinatesFromClient(clientX, clientY) {
     const metrics = mapViewportMetrics();
     return {
-      x: Math.max(0, Math.min(1600, (event.clientX - metrics.rect.left - metrics.offsetX) / metrics.scale)),
-      y: Math.max(0, Math.min(900, (event.clientY - metrics.rect.top - metrics.offsetY) / metrics.scale))
+      x: Math.max(0, Math.min(1600, (clientX - metrics.rect.left - metrics.offsetX) / metrics.scale)),
+      y: Math.max(0, Math.min(900, (clientY - metrics.rect.top - metrics.offsetY) / metrics.scale))
     };
+  }
+
+  function mapCoordinatesFromPointer(event) {
+    return mapCoordinatesFromClient(event.clientX, event.clientY);
+  }
+
+  function beginMapPinch() {
+    const points = [...mapState.pointers.values()].slice(0, 2);
+    if (points.length < 2) return;
+    const centerClient = {
+      x: (points[0].x + points[1].x) / 2,
+      y: (points[0].y + points[1].y) / 2
+    };
+    const center = mapCoordinatesFromClient(centerClient.x, centerClient.y);
+    mapState.pinch = {
+      distance: Math.max(1, Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y)),
+      scale: mapState.scale,
+      contentX: (center.x - mapState.x) / mapState.scale,
+      contentY: (center.y - mapState.y) / mapState.scale
+    };
+    mapState.drag = null;
+    mapState.suppressCanvasClick = true;
+    nodes.mapStage.classList.add("is-dragging");
+  }
+
+  function updateMapPinch() {
+    const points = [...mapState.pointers.values()].slice(0, 2);
+    if (!mapState.pinch || points.length < 2) return;
+    const centerClient = {
+      x: (points[0].x + points[1].x) / 2,
+      y: (points[0].y + points[1].y) / 2
+    };
+    const center = mapCoordinatesFromClient(centerClient.x, centerClient.y);
+    const distance = Math.max(1, Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y));
+    const ratio = Math.pow(distance / mapState.pinch.distance, 1.08);
+    const nextScale = Math.max(1, Math.min(16, mapState.pinch.scale * ratio));
+    mapState.scale = nextScale;
+    mapState.x = center.x - mapState.pinch.contentX * nextScale;
+    mapState.y = center.y - mapState.pinch.contentY * nextScale;
+    mapState.targetScale = mapState.scale;
+    mapState.targetX = mapState.x;
+    mapState.targetY = mapState.y;
+    updateMapTransform();
   }
 
   function syncMapViewportMode() {
@@ -1845,9 +1905,18 @@
     nodes.mapStage.addEventListener("dragstart", (event) => event.preventDefault());
     nodes.mapStage.addEventListener("pointermove", (event) => {
       const mapNode = event.target.closest("[data-map-node]");
-      if (mapNode) showMapTooltip(entriesById.get(mapNode.dataset.mapNode), event.clientX, event.clientY);
+      if (mapNode && event.pointerType !== "touch") showMapTooltip(entriesById.get(mapNode.dataset.mapNode), event.clientX, event.clientY);
       else hideMapTooltip();
+      if (mapState.pointers.has(event.pointerId)) {
+        mapState.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      }
+      if (mapState.pinch && mapState.pointers.size >= 2) {
+        event.preventDefault();
+        updateMapPinch();
+        return;
+      }
       if (!mapState.drag) return;
+      if (mapState.drag.pointerId !== event.pointerId) return;
       if (Math.hypot(event.clientX - mapState.drag.clientX, event.clientY - mapState.drag.clientY) > 4) {
         mapState.drag.moved = true;
       }
@@ -1859,17 +1928,60 @@
       updateMapTransform();
     });
     nodes.mapStage.addEventListener("pointerdown", (event) => {
-      if (event.target.closest("[data-map-node], [data-map-selection]")) return;
-      event.preventDefault();
+      if (event.target.closest("[data-map-selection]")) return;
+      const mapNode = event.target.closest("[data-map-node]");
+      if (!mapNode) event.preventDefault();
       stopMapAnimation();
       mapState.suppressCanvasClick = false;
-      mapState.drag = { clientX: event.clientX, clientY: event.clientY, x: mapState.x, y: mapState.y, moved: false };
+      mapState.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (mapState.pointers.size >= 2) {
+        event.preventDefault();
+        mapState.pointers.forEach((_, pointerId) => {
+          try {
+            nodes.mapStage.setPointerCapture(pointerId);
+          } catch (_) {
+            // A pointer can end between the second contact and capture.
+          }
+        });
+        beginMapPinch();
+        return;
+      }
+      if (mapNode) return;
+      mapState.drag = { pointerId: event.pointerId, clientX: event.clientX, clientY: event.clientY, x: mapState.x, y: mapState.y, moved: false };
       nodes.mapStage.classList.add("is-dragging");
       nodes.mapStage.setPointerCapture(event.pointerId);
     });
     nodes.mapStage.addEventListener("pointerup", (event) => {
-      mapState.suppressCanvasClick = Boolean(mapState.drag?.moved);
+      const usedPinch = Boolean(mapState.pinch);
+      const moved = Boolean(mapState.drag?.moved);
+      mapState.pointers.delete(event.pointerId);
+      mapState.suppressCanvasClick = usedPinch || moved;
+      if (usedPinch && mapState.pointers.size === 1) {
+        const [pointerId, point] = mapState.pointers.entries().next().value;
+        mapState.pinch = null;
+        mapState.drag = {
+          pointerId,
+          clientX: point.x,
+          clientY: point.y,
+          x: mapState.x,
+          y: mapState.y,
+          moved: true
+        };
+      } else if (!mapState.pointers.size) {
+        mapState.pinch = null;
+        mapState.drag = null;
+        nodes.mapStage.classList.remove("is-dragging");
+      }
+      if (nodes.mapStage.hasPointerCapture(event.pointerId)) nodes.mapStage.releasePointerCapture(event.pointerId);
+      window.setTimeout(() => {
+        mapState.suppressCanvasClick = false;
+      }, 0);
+    });
+    nodes.mapStage.addEventListener("pointercancel", (event) => {
+      mapState.pointers.delete(event.pointerId);
+      mapState.pinch = null;
       mapState.drag = null;
+      mapState.suppressCanvasClick = true;
       nodes.mapStage.classList.remove("is-dragging");
       if (nodes.mapStage.hasPointerCapture(event.pointerId)) nodes.mapStage.releasePointerCapture(event.pointerId);
       window.setTimeout(() => {
@@ -1886,12 +1998,13 @@
       zoomMap(multiplier, mapCoordinatesFromPointer(event));
     }, { passive: false });
     nodes.mapStage.addEventListener("click", (event) => {
+      if (mapState.suppressCanvasClick) return;
       const mapNode = event.target.closest("[data-map-node]");
       if (mapNode) {
         selectMapEntry(mapNode.dataset.mapNode);
         return;
       }
-      if (event.target.closest("[data-map-selection]") || mapState.suppressCanvasClick) return;
+      if (event.target.closest("[data-map-selection]")) return;
       if (!state.selectedId) return;
       state.selectedId = null;
       renderMap(filteredEntries());
@@ -1921,8 +2034,8 @@
     });
     root.querySelectorAll("[data-map-zoom]").forEach((button) => {
       button.addEventListener("click", () => {
-        if (button.dataset.mapZoom === "in") zoomMap(1.16);
-        if (button.dataset.mapZoom === "out") zoomMap(0.86);
+        if (button.dataset.mapZoom === "in") zoomMap(mapIsMobile() ? 1.35 : 1.16);
+        if (button.dataset.mapZoom === "out") zoomMap(mapIsMobile() ? 0.74 : 0.86);
         if (button.dataset.mapZoom === "reset") resetMap();
       });
     });

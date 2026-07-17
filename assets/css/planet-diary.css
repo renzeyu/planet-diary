@@ -2417,46 +2417,78 @@ a.planet-table-row:focus-visible {
   }
 
   .planet-map-toolbar {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.45rem 0;
   }
 
   .planet-map-legend {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem 0.75rem;
+    display: none;
   }
 
   .planet-map-masthead {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    row-gap: 1rem;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: end;
+    padding-bottom: 0.5rem;
   }
 
   .planet-map-index {
-    grid-column: 1 / 5;
-    max-width: 15rem;
-    font-size: 1.55rem;
+    grid-column: 1 / 2;
+    max-width: none;
+    font-size: 1.25rem;
+    white-space: nowrap;
   }
 
   .planet-map-stats {
-    grid-column: 1 / 4;
+    display: grid;
+    grid-column: 2 / 3;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.45rem;
+    text-align: right;
   }
 
   .planet-map-stats strong {
-    font-size: 1.15rem;
+    display: inline;
+    margin-right: 0.12rem;
+    font-size: 0.82rem;
   }
 
   .planet-map-line-key {
-    grid-column: 4 / 5;
+    display: none;
   }
 
-  .planet-map-line-key span {
-    grid-template-columns: 1.25rem 1fr;
-    gap: 0.35rem;
+  .planet-map-zoom {
+    gap: 0.1rem;
+  }
+
+  .planet-map-zoom button {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+
+  .planet-map-zoom .planet-map-theme-toggle {
+    width: 62px;
+  }
+
+  .planet-map-theme-toggle::before {
+    top: 9px;
+    left: 8px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .planet-map-theme-toggle[aria-pressed="true"]::before {
+    transform: translateX(22px);
   }
 
   .planet-map-stage {
+    height: 32rem;
+    height: clamp(27rem, 64svh, 38rem);
     min-height: 0;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: auto;
   }
 
   .planet-map-coordinate {
@@ -2469,18 +2501,18 @@ a.planet-table-row:focus-visible {
   .planet-map-selection {
     top: auto;
     left: 0;
-    display: grid;
+    display: block;
     width: 100%;
-    max-height: 78%;
-    grid-template-columns: minmax(7rem, 32%) minmax(0, 1fr);
+    max-height: 62%;
     border-top: 1px solid var(--chart-border);
     border-left: 0;
   }
 
   .planet-map-selection-media {
-    grid-column: 1 / 2;
-    border-right: 1px solid var(--chart-line);
-    border-bottom: 0;
+    float: left;
+    width: 6.75rem;
+    margin: 0.9rem 0.75rem 0.65rem 0.9rem;
+    border: 1px solid var(--chart-line);
   }
 
   .planet-map-selection img {
@@ -2488,17 +2520,33 @@ a.planet-table-row:focus-visible {
   }
 
   .planet-map-selection-copy {
-    grid-column: 1 / 3;
     padding: 0.85rem 0.9rem 1rem;
   }
 
   .planet-map-selection.has-image .planet-map-selection-copy {
-    grid-column: 2 / 3;
+    padding-top: 0.9rem;
   }
 
   .planet-map-selection-copy h2 {
-    padding-right: 1.5rem;
+    padding-right: 2.35rem;
     font-size: 1.55rem;
+  }
+
+  .planet-map-selection-story {
+    clear: both;
+    padding-top: 0.25rem;
+  }
+
+  .planet-map-selection-close {
+    top: 0.25rem;
+    right: 0.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--chart-muted);
+  }
+
+  .planet-map-node-hit {
+    r: 32px;
   }
 
   .planet-map-selection-facts {
