@@ -866,31 +866,51 @@
 
   function todayMarkup(feature) {
     const { entry, exact, todayKey } = feature;
-    const image = entry.images?.[0];
+    const images = entry.images || [];
     return `
-      <article class="planet-today-feature" style="${armStyle(entry.armId)}" aria-labelledby="planet-today-feature-${escapeHtml(entry.id)}">
-        <header class="planet-today-feature-heading">
-          <p class="planet-today-feature-kicker">
-            <span>${t(exact ? "todayFeature" : "nearestFeature")}</span>
-            <time datetime="${todayKey}">${escapeHtml(displayDate(todayKey))}</time>
-          </p>
-          <h2 id="planet-today-feature-${escapeHtml(entry.id)}" lang="${languageAttribute()}">
-            <span>#${entry.number}</span>
-            <a href="${escapeHtml(planetHref(entry.id))}">${escapeHtml(entryName(entry))}</a>
-          </h2>
-          <p class="planet-today-feature-meta">
-            ${escapeHtml(definitionLabel("systems", entry.systemId, state.language))}<br>
-            ${escapeHtml(displayDate(entry.date))}
-          </p>
-        </header>
-        <figure class="planet-today-feature-media">
-          ${image ? `<img src="${escapeHtml(imageUrl(image))}" alt="${escapeHtml(entryName(entry))}" ${image.width && image.height ? `width="${image.width}" height="${image.height}"` : ""} loading="eager" fetchpriority="high" decoding="async">` : ""}
-        </figure>
-        <div class="planet-today-feature-copy" lang="${languageAttribute()}">
-          <p class="planet-today-feature-label">${t("story")}</p>
-          <p class="planet-today-feature-story">${escapeHtml(entryStory(entry) || entryTagline(entry) || "")}</p>
-          <a class="planet-today-feature-link" href="${escapeHtml(planetHref(entry.id))}">${t("openDetail")} →</a>
-        </div>
+      <article class="planet-record planet-today-record" style="${armStyle(entry.armId)}" aria-labelledby="planet-today-feature-${escapeHtml(entry.id)}">
+        <section class="planet-record-hero">
+          <div class="planet-record-copy">
+            <header class="planet-record-heading">
+              <p class="planet-record-kicker planet-today-record-kicker">
+                <span aria-hidden="true"></span>
+                ${t(exact ? "todayFeature" : "nearestFeature")}
+                <time datetime="${todayKey}">${escapeHtml(displayDate(todayKey))}</time>
+              </p>
+              <h1 id="planet-today-feature-${escapeHtml(entry.id)}" class="${entryName(entry).length > 18 ? "is-long-name" : ""}" lang="${languageAttribute()}">
+                <a href="${escapeHtml(planetHref(entry.id))}">${escapeHtml(entryName(entry))}</a>
+              </h1>
+            </header>
+
+            <div class="planet-record-hero-story">
+              <p class="planet-record-label">${t("story")}</p>
+              <p class="planet-record-hero-story-text" lang="${languageAttribute()}">${escapeHtml(entryStory(entry) || entryTagline(entry) || "")}</p>
+              <div class="planet-record-hero-story-meta">
+                <span class="planet-today-catalog-number">#${entry.number}</span>
+                <span>${escapeHtml(displayDate(entry.date))}</span>
+                <a href="${escapeHtml(planetHref(entry.id))}">${t("openDetail")} →</a>
+              </div>
+            </div>
+          </div>
+
+          <figure class="planet-record-plate planet-today-record-plate">
+            <div class="planet-record-plate-images${images.length > 1 ? " is-multiple" : ""}">
+              ${images.map((image, index) => `
+                <img
+                  src="${escapeHtml(imageUrl(image))}"
+                  alt="${escapeHtml(`${entryName(entry)}${images.length > 1 ? ` ${index + 1}` : ""}`)}"
+                  ${image.width && image.height ? `width="${image.width}" height="${image.height}"` : ""}
+                  ${index === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'}
+                  decoding="async"
+                >
+              `).join("")}
+            </div>
+            <figcaption>
+              <span>${images.length === 1 ? t("originalIllustration") : `${images.length} ${t("originalIllustrations")}`}</span>
+              <span>${escapeHtml(displayDate(entry.date))}</span>
+            </figcaption>
+          </figure>
+        </section>
       </article>
     `;
   }
