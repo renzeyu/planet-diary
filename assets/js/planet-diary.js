@@ -27,10 +27,6 @@
       return merged;
     })
     .sort((left, right) => right.number - left.number);
-  const dailyFeaturePool = [...entries].sort((left, right) => (
-    dailyFeatureRank(left.id) - dailyFeatureRank(right.id) || left.number - right.number
-  ));
-
   const armColors = {
     archive: "#8fa7ff",
     verdant: "#75d39a",
@@ -39,7 +35,7 @@
     civic: "#f2c85b",
     frontier: "#c79bf2"
   };
-  const validViews = new Set(["detail", "gallery", "list", "map", "about"]);
+  const validViews = new Set(["today", "detail", "gallery", "list", "map", "about"]);
   const validSortFields = new Set(["number", "name", "date", "arm", "system", "world", "habitability", "synopsis"]);
   const url = new URL(window.location.href);
   const storedLanguage = (() => {
@@ -61,7 +57,7 @@
     ? requestedLanguage
     : ["en", "zh"].includes(storedLanguage) ? storedLanguage : "en";
   const initialMapTheme = ["day", "night"].includes(storedMapTheme) ? storedMapTheme : "day";
-  const initialView = validViews.has(url.searchParams.get("view")) ? url.searchParams.get("view") : "detail";
+  const initialView = validViews.has(url.searchParams.get("view")) ? url.searchParams.get("view") : "today";
   const initialSortBy = validSortFields.has(url.searchParams.get("order")) ? url.searchParams.get("order") : "number";
   const requestedSortDirection = url.searchParams.get("sort");
   const initialHashId = window.location.hash.replace(/^#planet-/, "");
@@ -101,7 +97,7 @@
     focusNav: root.querySelector("[data-planet-focus-nav]"),
     focusLabel: root.querySelector("[data-planet-focus-label]"),
     backToTop: root.querySelector("[data-planet-back-to-top]"),
-    dailyFeature: root.querySelector("[data-planet-daily-feature]"),
+    today: root.querySelector("[data-planet-today]"),
     detail: root.querySelector("[data-planet-detail-list]"),
     gallery: root.querySelector("[data-planet-gallery]"),
     list: root.querySelector("[data-planet-list]"),
@@ -123,8 +119,10 @@
       worlds: "worlds",
       catalogControls: "Planet Diary controls",
       viewAs: "View Planet Diary as",
+      today: "Today",
       cards: "Cards",
-      todayFeature: "Today's Feature",
+      todayFeature: "On This Day",
+      nearestFeature: "Nearest Archive Date",
       gallery: "Gallery",
       list: "List",
       starMap: "Star Map",
@@ -222,8 +220,10 @@
       worlds: "个世界",
       catalogControls: "星球日记浏览工具",
       viewAs: "星球日记视图",
+      today: "今日",
       cards: "卡片",
-      todayFeature: "今日星球",
+      todayFeature: "同日星球",
+      nearestFeature: "最近存档日期",
       gallery: "图库",
       list: "列表",
       starMap: "星图",
@@ -356,22 +356,47 @@
     return state.language === "zh" ? "zh-Hans" : "en";
   }
 
-  function dailyFeatureRank(value) {
-    let hash = 2166136261;
-    for (const character of String(value)) {
-      hash = Math.imul(hash ^ character.charCodeAt(0), 16777619) >>> 0;
+  function localDateKey(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  function calendarDayIndex(value) {
+    const match = String(value || "").match(/-(\d{2})-(\d{2})$/);
+    if (!match) return Number.NaN;
+    return Math.round((Date.UTC(2024, Number(match[1]) - 1, Number(match[2])) - Date.UTC(2024, 0, 1)) / 86400000);
+  }
+
+  function calendarDayDistance(left, right) {
+    const distance = Math.abs(left - right);
+    return Math.min(distance, 366 - distance);
+  }
+
+  function todayFeature(date = new Date()) {
+    const todayKey = localDateKey(date);
+    const monthDay = todayKey.slice(5);
+    const exactMatches = entries.filter((entry) => String(entry.date || "").slice(5) === monthDay);
+    let candidates = exactMatches;
+
+    if (!candidates.length) {
+      const targetDay = calendarDayIndex(todayKey);
+      const ranked = entries
+        .map((entry) => ({ entry, distance: calendarDayDistance(targetDay, calendarDayIndex(entry.date)) }))
+        .filter((item) => Number.isFinite(item.distance));
+      const nearestDistance = Math.min(...ranked.map((item) => item.distance));
+      candidates = ranked.filter((item) => item.distance === nearestDistance).map((item) => item.entry);
     }
-    return hash;
-  }
 
-  function utcDateKey(date = new Date()) {
-    return date.toISOString().slice(0, 10);
-  }
-
-  function dailyFeatureEntry(date = new Date()) {
-    if (!dailyFeaturePool.length) return null;
-    const dayNumber = Math.floor(date.getTime() / 86400000);
-    return dailyFeaturePool[dayNumber % dailyFeaturePool.length];
+    candidates.sort((left, right) => String(right.date).localeCompare(String(left.date)) || left.number - right.number);
+    if (!candidates.length) return null;
+    const rotationIndex = ((date.getFullYear() - 2016) % candidates.length + candidates.length) % candidates.length;
+    return {
+      entry: candidates[rotationIndex],
+      exact: Boolean(exactMatches.length),
+      todayKey
+    };
   }
 
   function escapeHtml(value) {
@@ -557,7 +582,7 @@
 
     next.searchParams.delete("planet");
     const values = {
-      view: state.view === "detail" ? "" : state.view,
+      view: state.view === "today" ? "" : state.view,
       q: state.query,
       year: state.year === "all" ? "" : state.year,
       arm: state.arm === "all" ? "" : state.arm,
@@ -696,8 +721,9 @@
     if (state.focusedId) view = "detail";
     if (!validViews.has(view)) return;
     state.view = view;
-    if (view === "about") setFiltersOpen(false);
+    if (view === "about" || view === "today") setFiltersOpen(false);
     root.classList.toggle("is-about-view", view === "about");
+    root.classList.toggle("is-today-view", view === "today");
     root.querySelectorAll("[data-planet-view]").forEach((button) => {
       const selected = button.dataset.planetView === view;
       button.setAttribute("aria-selected", String(selected));
@@ -805,15 +831,15 @@
     `;
   }
 
-  function dailyFeatureMarkup(entry) {
+  function todayMarkup(feature) {
+    const { entry, exact, todayKey } = feature;
     const image = entry.images?.[0];
-    const today = utcDateKey();
     return `
       <article class="planet-today-feature" style="${armStyle(entry.armId)}" aria-labelledby="planet-today-feature-${escapeHtml(entry.id)}">
         <header class="planet-today-feature-heading">
           <p class="planet-today-feature-kicker">
-            <span>${t("todayFeature")}</span>
-            <time datetime="${today}">${escapeHtml(displayDate(today))}</time>
+            <span>${t(exact ? "todayFeature" : "nearestFeature")}</span>
+            <time datetime="${todayKey}">${escapeHtml(displayDate(todayKey))}</time>
           </p>
           <h2 id="planet-today-feature-${escapeHtml(entry.id)}" lang="${languageAttribute()}">
             <span>#${entry.number}</span>
@@ -980,37 +1006,35 @@
 
     const filtered = filteredEntries();
     syncStatus(filtered);
+    if (state.view === "today") renderToday();
     if (state.view === "detail") renderDetail(filtered);
     if (state.view === "gallery") renderGallery(filtered);
     if (state.view === "list") renderList(filtered);
     if (state.view === "map") renderMap(filtered);
   }
 
+  function renderToday() {
+    const feature = todayFeature();
+    nodes.today.innerHTML = feature ? todayMarkup(feature) : `<p class="planet-empty">${t("notFound")}</p>`;
+    if (feature) dispatchMedia(nodes.today);
+  }
+
   function renderFocusedDetail(entry) {
-    nodes.dailyFeature.hidden = true;
-    nodes.dailyFeature.innerHTML = "";
     nodes.detail.innerHTML = entry ? focusedDetailMarkup(entry) : `<p class="planet-empty">${t("notFound")}</p>`;
     updateMoreButton("detail", entry ? 1 : 0, entry ? 1 : 0);
     dispatchMedia(nodes.detail);
   }
 
   function renderDetail(filtered) {
-    const feature = dailyFeatureEntry();
-    nodes.dailyFeature.hidden = !feature;
-    nodes.dailyFeature.innerHTML = feature ? dailyFeatureMarkup(feature) : "";
-    if (feature) dispatchMedia(nodes.dailyFeature);
-    const regularEntries = feature
-      ? filtered.filter((entry) => entry.id !== feature.id)
-      : filtered;
     if (!state.focusedId && state.selectedId) {
-      const selectedIndex = regularEntries.findIndex((entry) => entry.id === state.selectedId);
+      const selectedIndex = filtered.findIndex((entry) => entry.id === state.selectedId);
       if (selectedIndex >= state.visible.detail) {
         state.visible.detail = Math.ceil((selectedIndex + 1) / 12) * 12;
       }
     }
-    const visible = state.focusedId ? regularEntries : regularEntries.slice(0, state.visible.detail);
+    const visible = state.focusedId ? filtered : filtered.slice(0, state.visible.detail);
     nodes.detail.innerHTML = visible.length ? visible.map(detailMarkup).join("") : `<p class="planet-empty">${t("noMatches")}</p>`;
-    updateMoreButton("detail", visible.length, regularEntries.length);
+    updateMoreButton("detail", visible.length, filtered.length);
     dispatchMedia(nodes.detail);
   }
 

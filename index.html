@@ -15,7 +15,7 @@
     <script src="./assets/js/main.js" defer></script>
   </head>
   <body class="planet-diary-template">
-    <main class="planet-catalog">
+    <main class="planet-catalog is-today-view">
       <header class="planet-catalog-header">
         <div class="planet-catalog-identity">
           <h1 data-i18n="catalogTitle">Planet Diary</h1>
@@ -33,7 +33,8 @@
 
       <section class="planet-catalog-tools" aria-label="Planet Diary controls" data-i18n-aria="catalogControls">
         <div class="planet-view-tabs" role="tablist" aria-label="View Planet Diary as" data-i18n-aria="viewAs">
-          <button type="button" role="tab" aria-selected="true" aria-controls="planet-detail-view" data-planet-view="detail" data-i18n="cards">Cards</button>
+          <button type="button" role="tab" aria-selected="true" aria-controls="planet-today-view" data-planet-view="today" data-i18n="today">Today</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="planet-detail-view" data-planet-view="detail" data-i18n="cards">Cards</button>
           <button type="button" role="tab" aria-selected="false" aria-controls="planet-gallery-view" data-planet-view="gallery" data-i18n="gallery">Gallery</button>
           <button type="button" role="tab" aria-selected="false" aria-controls="planet-list-view" data-planet-view="list" data-i18n="list">List</button>
           <button type="button" role="tab" aria-selected="false" aria-controls="planet-map-view" data-planet-view="map" data-i18n="starMap">Star Map</button>
@@ -111,8 +112,11 @@
         </div>
       </nav>
 
-      <section id="planet-detail-view" class="planet-view" role="tabpanel" data-planet-panel="detail">
-        <div data-planet-daily-feature></div>
+      <section id="planet-today-view" class="planet-view" role="tabpanel" data-planet-panel="today">
+        <div data-planet-today></div>
+      </section>
+
+      <section id="planet-detail-view" class="planet-view" role="tabpanel" data-planet-panel="detail" hidden>
         <div class="planet-detail-index" data-planet-detail-list></div>
         <div class="planet-load-more"><button type="button" data-planet-more="detail">More</button></div>
       </section>
