@@ -60,6 +60,21 @@
       return new Set();
     }
   })();
+  const migratedPublicLikeIds = (() => {
+    try {
+      const stored = JSON.parse(window.localStorage.getItem("planetDiaryMigratedPublicLikes") || "[]");
+      return new Set(Array.isArray(stored) ? stored.map(String) : []);
+    } catch (_) {
+      return new Set();
+    }
+  })();
+  const likesApiBase = String(
+    window.PLANET_DIARY_LIKES_API || "https://planet-diary-likes.bitsai-zeyu.workers.dev/v1/likes"
+  ).replace(/\/$/, "");
+  const publicLikeCounts = new Map();
+  const likeLoadRequests = new Map();
+  const likeMutationVersions = new Map();
+  const anonymousVisitorToken = getOrCreateAnonymousVisitorToken();
   const requestedLanguage = url.searchParams.get("lang");
   const initialLanguage = ["en", "zh"].includes(requestedLanguage)
     ? requestedLanguage
@@ -222,6 +237,7 @@
       liked: "Liked",
       likePlanet: "Like planet",
       unlikePlanet: "Remove like from planet",
+      likeUnavailable: "Could not update like. Try again.",
       share: "Share",
       sharePlanet: "Share planet",
       linkCopied: "Copied",
@@ -333,6 +349,7 @@
       liked: "已喜欢",
       likePlanet: "喜欢这颗星球",
       unlikePlanet: "取消喜欢这颗星球",
+      likeUnavailable: "暂时无法更新，请重试。",
       share: "分享",
       sharePlanet: "分享这颗星球",
       linkCopied: "已复制",
@@ -368,6 +385,43 @@
 
   function t(key) {
     return copy[state.language]?.[key] || copy.en[key] || key;
+  }
+
+  function createAnonymousVisitorToken() {
+    if (crypto.randomUUID) return crypto.randomUUID();
+    const bytes = crypto.getRandomValues(new Uint8Array(24));
+    return btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+
+  function getOrCreateAnonymousVisitorToken() {
+    const storageKey = "planetDiaryAnonymousVisitor";
+    try {
+      const stored = window.localStorage.getItem(storageKey);
+      if (/^[A-Za-z0-9_-]{20,96}$/.test(stored || "")) return stored;
+      const token = createAnonymousVisitorToken();
+      window.localStorage.setItem(storageKey, token);
+      return token;
+    } catch (_) {
+      return createAnonymousVisitorToken();
+    }
+  }
+
+  function formatLikeCount(count) {
+    return new Intl.NumberFormat(state.language === "zh" ? "zh-CN" : "en-US", {
+      notation: "compact",
+      maximumFractionDigits: 1
+    }).format(count);
+  }
+
+  function likeCountLabel(count) {
+    if (!Number.isFinite(count)) return "";
+    return state.language === "zh" ? `${count} 个喜欢` : `${count} ${count === 1 ? "like" : "likes"}`;
+  }
+
+  function likeButtonLabel(entry, liked, count) {
+    const action = t(liked ? "unlikePlanet" : "likePlanet");
+    const countLabel = likeCountLabel(count);
+    return `${action} ${entryName(entry)}${countLabel ? `. ${countLabel}` : ""}`;
   }
 
   function entryName(entry) {
@@ -870,7 +924,9 @@
   }
 
   function planetActionsMarkup(entry) {
-    const liked = likedPlanetIds.has(String(entry.id));
+    const id = String(entry.id);
+    const liked = likedPlanetIds.has(id);
+    const count = publicLikeCounts.get(id);
     const name = entryName(entry);
     return `
       <div class="planet-record-actions" role="group" aria-label="${escapeHtml(t("planetActions"))}">
@@ -879,10 +935,12 @@
           type="button"
           data-planet-like="${escapeHtml(entry.id)}"
           aria-pressed="${liked}"
-          aria-label="${escapeHtml(`${t(liked ? "unlikePlanet" : "likePlanet")} ${name}`)}"
+          aria-busy="${!Number.isFinite(count)}"
+          aria-label="${escapeHtml(likeButtonLabel(entry, liked, count))}"
         >
           <span class="planet-record-action-icon is-heart" aria-hidden="true"></span>
           <span data-planet-action-label>${t(liked ? "liked" : "like")}</span>
+          <span class="planet-record-like-count" data-planet-like-count>${Number.isFinite(count) ? escapeHtml(formatLikeCount(count)) : "—"}</span>
         </button>
         <button
           class="planet-record-action planet-record-share"
@@ -1154,6 +1212,7 @@
     nodes.detail.innerHTML = entry ? focusedDetailMarkup(entry) : `<p class="planet-empty">${t("notFound")}</p>`;
     updateMoreButton("detail", entry ? 1 : 0, entry ? 1 : 0);
     dispatchMedia(nodes.detail);
+    if (entry) hydratePlanetLike(entry);
   }
 
   function renderDetail(filtered) {
@@ -2005,23 +2064,146 @@
     }
   }
 
-  function syncLikeButton(button, entry) {
-    const liked = likedPlanetIds.has(String(entry.id));
-    button.classList.toggle("is-liked", liked);
-    button.setAttribute("aria-pressed", String(liked));
-    button.setAttribute("aria-label", `${t(liked ? "unlikePlanet" : "likePlanet")} ${entryName(entry)}`);
-    const label = button.querySelector("[data-planet-action-label]");
-    if (label) label.textContent = t(liked ? "liked" : "like");
+  function persistMigratedPublicLikes() {
+    try {
+      window.localStorage.setItem("planetDiaryMigratedPublicLikes", JSON.stringify([...migratedPublicLikeIds]));
+    } catch (_) {
+      // Migration can be retried on a later visit when storage is unavailable.
+    }
   }
 
-  function togglePlanetLike(button) {
-    const entry = entriesById.get(button.dataset.planetLike);
-    if (!entry) return;
+  function syncLikeButton(button, entry) {
     const id = String(entry.id);
-    if (likedPlanetIds.has(id)) likedPlanetIds.delete(id);
-    else likedPlanetIds.add(id);
+    const liked = likedPlanetIds.has(id);
+    const count = publicLikeCounts.get(id);
+    button.classList.toggle("is-liked", liked);
+    button.setAttribute("aria-pressed", String(liked));
+    button.setAttribute("aria-busy", "false");
+    button.setAttribute("aria-label", likeButtonLabel(entry, liked, count));
+    const label = button.querySelector("[data-planet-action-label]");
+    if (label) label.textContent = t(liked ? "liked" : "like");
+    const countNode = button.querySelector("[data-planet-like-count]");
+    if (countNode) countNode.textContent = Number.isFinite(count) ? formatLikeCount(count) : "—";
+  }
+
+  function syncPlanetLikeButtons(entry) {
+    const id = String(entry.id);
+    root.querySelectorAll(`[data-planet-like="${CSS.escape(id)}"]`).forEach((button) => syncLikeButton(button, entry));
+  }
+
+  function applyPlanetLikeState(entry, nextState) {
+    const id = String(entry.id);
+    if (nextState.liked) likedPlanetIds.add(id);
+    else likedPlanetIds.delete(id);
+    if (Number.isFinite(nextState.count)) publicLikeCounts.set(id, Math.max(0, Number(nextState.count)));
+    else publicLikeCounts.delete(id);
     persistLikedPlanets();
-    syncLikeButton(button, entry);
+    syncPlanetLikeButtons(entry);
+  }
+
+  function likeEndpoint(entry, includeVisitor = false) {
+    const endpoint = new URL(`${likesApiBase}/${encodeURIComponent(entry.id)}`);
+    if (includeVisitor) endpoint.searchParams.set("visitor", anonymousVisitorToken);
+    return endpoint.href;
+  }
+
+  async function parseLikeResponse(response) {
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const error = new Error(payload.error || t("likeUnavailable"));
+      error.status = response.status;
+      throw error;
+    }
+    const count = Number(payload.count);
+    if (!Number.isFinite(count) || typeof payload.liked !== "boolean") throw new Error("Invalid likes response");
+    return { count: Math.max(0, count), liked: payload.liked };
+  }
+
+  async function fetchPlanetLikeState(entry) {
+    const response = await fetch(likeEndpoint(entry, true), {
+      method: "GET",
+      mode: "cors",
+      credentials: "omit",
+      cache: "no-store",
+      headers: { Accept: "application/json" }
+    });
+    return parseLikeResponse(response);
+  }
+
+  async function updatePlanetLikeState(entry, liked) {
+    const response = await fetch(likeEndpoint(entry), {
+      method: "POST",
+      mode: "cors",
+      credentials: "omit",
+      cache: "no-store",
+      headers: { "Content-Type": "text/plain;charset=UTF-8" },
+      body: JSON.stringify({ visitor: anonymousVisitorToken, liked })
+    });
+    return parseLikeResponse(response);
+  }
+
+  function markLikeUnavailable(entry) {
+    const id = String(entry.id);
+    root.querySelectorAll(`[data-planet-like="${CSS.escape(id)}"]`).forEach((button) => {
+      button.disabled = false;
+      button.classList.add("is-unavailable");
+      button.setAttribute("aria-busy", "false");
+      button.title = t("likeUnavailable");
+      window.setTimeout(() => {
+        button.classList.remove("is-unavailable");
+        button.removeAttribute("title");
+      }, 2200);
+    });
+  }
+
+  function hydratePlanetLike(entry) {
+    const id = String(entry.id);
+    if (likeLoadRequests.has(id)) return likeLoadRequests.get(id);
+    const mutationVersion = likeMutationVersions.get(id) || 0;
+    const request = (async () => {
+      let nextState = await fetchPlanetLikeState(entry);
+      const shouldMigrate = likedPlanetIds.has(id) && !migratedPublicLikeIds.has(id) && !nextState.liked;
+      if (shouldMigrate) nextState = await updatePlanetLikeState(entry, true);
+      migratedPublicLikeIds.add(id);
+      persistMigratedPublicLikes();
+      if ((likeMutationVersions.get(id) || 0) === mutationVersion) applyPlanetLikeState(entry, nextState);
+    })().catch(() => {
+      if ((likeMutationVersions.get(id) || 0) === mutationVersion) markLikeUnavailable(entry);
+    }).finally(() => {
+      likeLoadRequests.delete(id);
+    });
+    likeLoadRequests.set(id, request);
+    return request;
+  }
+
+  async function togglePlanetLike(button) {
+    const entry = entriesById.get(button.dataset.planetLike);
+    if (!entry || button.disabled) return;
+    const id = String(entry.id);
+    const previousState = {
+      liked: likedPlanetIds.has(id),
+      count: publicLikeCounts.get(id)
+    };
+    const nextLiked = !previousState.liked;
+    const optimisticCount = Number.isFinite(previousState.count)
+      ? Math.max(0, previousState.count + (nextLiked ? 1 : -1))
+      : undefined;
+    likeMutationVersions.set(id, (likeMutationVersions.get(id) || 0) + 1);
+    applyPlanetLikeState(entry, { liked: nextLiked, count: optimisticCount });
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    try {
+      const savedState = await updatePlanetLikeState(entry, nextLiked);
+      migratedPublicLikeIds.add(id);
+      persistMigratedPublicLikes();
+      applyPlanetLikeState(entry, savedState);
+    } catch (_) {
+      applyPlanetLikeState(entry, previousState);
+      markLikeUnavailable(entry);
+    } finally {
+      button.disabled = false;
+      button.setAttribute("aria-busy", "false");
+    }
   }
 
   function shareUrlFor(entry) {

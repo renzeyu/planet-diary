@@ -255,13 +255,32 @@ body.planet-diary-template {
 }
 
 .planet-record-like {
-  width: 5rem;
+  width: 6.8rem;
   justify-content: center;
 }
 
 .planet-record-share {
   width: 5.5rem;
   justify-content: center;
+}
+
+.planet-record-action:disabled {
+  opacity: 0.62;
+  cursor: wait;
+}
+
+.planet-record-action.is-unavailable {
+  border-style: dashed;
+}
+
+.planet-record-like-count {
+  min-width: 2ch;
+  border-left: 1px solid currentColor;
+  padding-left: 0.42rem;
+  color: currentColor;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  opacity: 0.62;
 }
 
 .planet-record-action-icon {

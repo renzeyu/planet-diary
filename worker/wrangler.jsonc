@@ -1,0 +1,17 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "planet-diary-likes",
+	"main": "src/index.js",
+	"compatibility_date": "2026-07-17",
+	"workers_dev": true,
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "planet-diary-likes",
+			"database_id": "87796440-dd47-4a17-b64d-1e179433e5f3"
+		}
+	],
+	"vars": {
+		"ALLOWED_ORIGINS": "https://planetdiary.org,https://www.planetdiary.org,https://renzeyu.github.io,http://localhost:8080,http://localhost:8081,http://127.0.0.1:8080,http://127.0.0.1:8081"
+	}
+}

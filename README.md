@@ -10,7 +10,7 @@ Run a static server from this folder, then open the printed local URL:
 python3 -m http.server 8081
 ```
 
-The site has no build step and no package dependencies.
+The website has no build step. Cloudflare Worker dependencies are isolated inside `worker/` and are not needed for a normal site preview.
 
 ## Structure
 
@@ -21,6 +21,7 @@ The site has no build step and no package dependencies.
 - `assets/archive/planet-diary-curation.js` - names, catalog properties, systems, arms, and map positions
 - `assets/archive/planet-diary-translations.js` - Chinese and English story text
 - `assets/archive/images/` - optimized public illustrations
+- `worker/` - Cloudflare Worker and D1 migrations for anonymous public likes
 
 ## Live site
 
@@ -29,6 +30,17 @@ The site has no build step and no package dependencies.
 - GitHub Pages fallback: <https://renzeyu.github.io/planet-diary/>
 
 GitHub Pages publishes directly from `main` at `/ (root)`. The site has no build step; pushing a commit to `main` updates the live site. The `.nojekyll` file tells GitHub Pages to serve the static files without Jekyll processing.
+
+## Public likes
+
+Detail pages read and write public like counts through the `planet-diary-likes` Cloudflare Worker:
+
+- API: <https://planet-diary-likes.bitsai-zeyu.workers.dev>
+- Database: Cloudflare D1 `planet-diary-likes`
+- Browser identity: a random local token; only its HMAC hash is stored remotely
+- Limits: one like per anonymous browser and planet, with write throttling
+
+The website remains usable if the API is temporarily unavailable, but the public count displays an unavailable state and no like change is claimed as saved. See `worker/README.md` for local testing, migrations, and deployment commands.
 
 ## Custom domain
 
