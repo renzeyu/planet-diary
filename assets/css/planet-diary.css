@@ -997,6 +997,10 @@ body.planet-diary-template {
   object-fit: contain;
 }
 
+.planet-gallery-media img[data-planet-lazy-src] {
+  visibility: hidden;
+}
+
 .planet-gallery-caption {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

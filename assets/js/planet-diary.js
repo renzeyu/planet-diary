@@ -366,6 +366,7 @@
   let searchTimer;
   let backToTopFrame;
   let mapPointCache;
+  let deferredImageObserver;
 
   function t(key) {
     return copy[state.language]?.[key] || copy.en[key] || key;
@@ -1113,7 +1114,7 @@
       <article class="planet-gallery-card">
         <a href="${escapeHtml(planetHref(entry.id))}" aria-label="${t("openPlanet")} ${catalogNumber(entry.number)} ${escapeHtml(entryName(entry))}">
           <figure class="planet-gallery-media">
-            ${image ? `<img src="${escapeHtml(imageUrl(image))}" alt="${escapeHtml(entryName(entry))}" ${image.width && image.height ? `width="${image.width}" height="${image.height}"` : ""} loading="lazy" decoding="async">` : ""}
+            ${image ? `<img data-planet-lazy-src="${escapeHtml(imageUrl(image))}" alt="${escapeHtml(entryName(entry))}" ${image.width && image.height ? `width="${image.width}" height="${image.height}"` : ""} loading="lazy" decoding="async">` : ""}
           </figure>
           <div class="planet-gallery-caption" lang="${languageAttribute()}"><span>${escapeHtml(entryName(entry))}</span><small>${catalogNumber(entry.number)}</small></div>
           <p class="planet-gallery-subtitle">${escapeHtml(displayDate(entry.date))}</p>
@@ -1231,7 +1232,34 @@
   }
 
   function dispatchMedia(target) {
+    observeDeferredImages(target);
     document.dispatchEvent(new CustomEvent("zeyu:media-added", { detail: { root: target } }));
+  }
+
+  function loadDeferredImage(image) {
+    const source = image.dataset.planetLazySrc;
+    if (!source) return;
+    image.src = source;
+    image.removeAttribute("data-planet-lazy-src");
+  }
+
+  function observeDeferredImages(target) {
+    const images = [...target.querySelectorAll("img[data-planet-lazy-src]")];
+    if (!images.length) return;
+    if (!("IntersectionObserver" in window)) {
+      images.forEach(loadDeferredImage);
+      return;
+    }
+    if (!deferredImageObserver) {
+      deferredImageObserver = new IntersectionObserver((observations) => {
+        observations.forEach((observation) => {
+          if (!observation.isIntersecting) return;
+          deferredImageObserver.unobserve(observation.target);
+          loadDeferredImage(observation.target);
+        });
+      }, { rootMargin: "150px 0px", threshold: 0.01 });
+    }
+    images.forEach((image) => deferredImageObserver.observe(image));
   }
 
   function armStyle(id) {

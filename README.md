@@ -10,7 +10,7 @@ Run a static server from this folder, then open the printed local URL:
 python3 -m http.server 8081
 ```
 
-The website has no build step. Cloudflare Worker dependencies are isolated inside `worker/` and are not needed for a normal site preview.
+The generated browser data is committed, so the website has no required build step for previewing or deployment. Cloudflare Worker dependencies are isolated inside `worker/` and are not needed for a normal site preview.
 
 ## Structure
 
@@ -21,7 +21,15 @@ The website has no build step. Cloudflare Worker dependencies are isolated insid
 - `assets/archive/planet-diary-curation.js` - names, catalog properties, systems, arms, and map positions
 - `assets/archive/planet-diary-translations.js` - Chinese and English story text
 - `assets/archive/images/` - optimized public illustrations
+- `assets/runtime/` - compact browser copies generated from the master archive files
+- `scripts/build-runtime-assets.mjs` - regenerates the compact browser data after archive edits
 - `worker/` - Cloudflare Worker and D1 migrations for anonymous public likes
+
+After changing any of the three master files in `assets/archive/`, refresh the committed browser copies with:
+
+```sh
+node scripts/build-runtime-assets.mjs
+```
 
 ## Live site
 
