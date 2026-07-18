@@ -222,10 +222,7 @@
       themes: "Themes",
       synopsis: "Synopsis",
       undated: "Undated",
-      originalIllustration: "Original illustration",
-      originalIllustrations: "original illustrations",
       plate: "Plate",
-      story: "Story",
       planetActions: "Planet actions",
       like: "Like",
       liked: "Liked",
@@ -329,10 +326,7 @@
       themes: "主题",
       synopsis: "简介",
       undated: "日期不详",
-      originalIllustration: "原作插画",
-      originalIllustrations: "幅原作插画",
       plate: "图版",
-      story: "故事",
       planetActions: "星球操作",
       like: "喜欢",
       liked: "已喜欢",
@@ -376,6 +370,10 @@
     return copy[state.language]?.[key] || copy.en[key] || key;
   }
 
+  function catalogNumber(number) {
+    return `#\u202F${number}`;
+  }
+
   function createAnonymousVisitorToken() {
     if (crypto.randomUUID) return crypto.randomUUID();
     const bytes = crypto.getRandomValues(new Uint8Array(24));
@@ -403,7 +401,7 @@
   }
 
   function likeCountLabel(count) {
-    if (!Number.isFinite(count)) return "";
+    if (!Number.isFinite(count) || count <= 0) return "";
     return state.language === "zh" ? `${count} 个喜欢` : `${count} ${count === 1 ? "like" : "likes"}`;
   }
 
@@ -756,7 +754,7 @@
     }
     if (state.focusedId) {
       const entry = entriesById.get(state.focusedId);
-      nodes.focusLabel.textContent = `#${entry.number} · ${entryName(entry)}`;
+      nodes.focusLabel.textContent = `${catalogNumber(entry.number)} · ${entryName(entry)}`;
     }
     syncFilterControls();
     syncDocumentTitle();
@@ -848,7 +846,7 @@
       ? escapeHtml(`X ${Number(entry.map.x).toFixed(3)} · Y ${Number(entry.map.y).toFixed(3)}`)
       : "—";
     const properties = [
-      [t("catalog"), `#${entry.number}`],
+      [t("catalog"), catalogNumber(entry.number)],
       [t("created"), displayDate(entry.date)],
       [t("spiralArm"), bilingualLabel("arms", entry.armId)],
       [t("system"), bilingualLabel("systems", entry.systemId)],
@@ -905,8 +903,8 @@
           `).join("")}
         </div>
         <figcaption>
-          <span>${t("plate")} #${entry.number}</span>
-          <span>${images.length === 1 ? t("originalIllustration") : `${images.length} ${t("originalIllustrations")}`} · ${escapeHtml(displayDate(entry.date))}</span>
+          <span>${t("plate")} ${catalogNumber(entry.number)}</span>
+          <span>${escapeHtml(displayDate(entry.date))}</span>
         </figcaption>
       </figure>
     `;
@@ -916,11 +914,12 @@
     const id = String(entry.id);
     const liked = likedPlanetIds.has(id);
     const count = publicLikeCounts.get(id);
+    const hasCount = Number.isFinite(count) && count > 0;
     const name = entryName(entry);
     return `
       <div class="planet-record-actions" role="group" aria-label="${escapeHtml(t("planetActions"))}">
         <button
-          class="planet-record-action planet-record-like${liked ? " is-liked" : ""}"
+          class="planet-record-action planet-record-like${liked ? " is-liked" : ""}${hasCount ? " has-count" : ""}"
           type="button"
           data-planet-like="${escapeHtml(entry.id)}"
           aria-pressed="${liked}"
@@ -929,7 +928,7 @@
           title="${escapeHtml(likeButtonLabel(entry, liked, count))}"
         >
           <span class="planet-record-action-icon is-heart" aria-hidden="true"></span>
-          <span class="planet-record-like-count" data-planet-like-count>${Number.isFinite(count) ? escapeHtml(formatLikeCount(count)) : "—"}</span>
+          <span class="planet-record-like-count" data-planet-like-count${hasCount ? "" : " hidden"}>${hasCount ? escapeHtml(formatLikeCount(count)) : ""}</span>
         </button>
         <button
           class="planet-record-action planet-record-share"
@@ -953,7 +952,7 @@
     return `
       <article class="planet-detail-card" id="planet-${escapeHtml(entry.id)}" data-planet-id="${escapeHtml(entry.id)}">
         <header class="planet-detail-meta">
-          <h2 lang="${languageAttribute()}"><span>#${entry.number}</span>${name}</h2>
+          <h2 lang="${languageAttribute()}"><span>${catalogNumber(entry.number)}</span>${name}</h2>
           <dl class="planet-property-list">${propertyList(entry, { includeSynopsis: false })}</dl>
         </header>
         ${detailImages(entry)}
@@ -989,13 +988,13 @@
             </header>
 
             <div class="planet-record-hero-story">
-              <p class="planet-record-label">${t("story")}</p>
               <p class="planet-record-hero-story-text" lang="${languageAttribute()}">${escapeHtml(entryStory(entry) || entryTagline(entry) || "")}</p>
               <div class="planet-record-hero-story-meta">
-                <span class="planet-today-catalog-number">#${entry.number}</span>
+                <span class="planet-today-catalog-number">${catalogNumber(entry.number)}</span>
                 <span>${escapeHtml(displayDate(entry.date))}</span>
                 <a href="${escapeHtml(planetHref(entry.id))}">${t("openDetail")} →</a>
               </div>
+              ${planetActionsMarkup(entry)}
             </div>
           </div>
 
@@ -1012,7 +1011,6 @@
               `).join("")}
             </div>
             <figcaption>
-              <span>${images.length === 1 ? t("originalIllustration") : `${images.length} ${t("originalIllustrations")}`}</span>
               <span>${escapeHtml(displayDate(entry.date))}</span>
             </figcaption>
           </figure>
@@ -1086,7 +1084,6 @@
             </header>
 
             <div class="planet-record-hero-story">
-              <p class="planet-record-label">${t("story")}</p>
               <p class="planet-record-hero-story-text" lang="${languageAttribute()}">${escapeHtml(entryStory(entry) || entryTagline(entry) || "")}</p>
               <div class="planet-record-hero-story-meta">
                 <span>${escapeHtml(displayDate(entry.date))}</span>
@@ -1095,7 +1092,7 @@
             </div>
 
             <dl class="planet-record-key-facts">
-              <div><dt>${t("catalog")}</dt><dd>#${entry.number}</dd></div>
+              <div><dt>${t("catalog")}</dt><dd>${catalogNumber(entry.number)}</dd></div>
               <div><dt>${t("system")}</dt><dd>${bilingualLabel("systems", entry.systemId)}</dd></div>
               <div><dt>${t("habitability")}</dt><dd>${escapeHtml(entry.habitability)} · ${escapeHtml(state.language === "zh" ? habitability?.labelZh || "—" : habitability?.label || "—")}</dd></div>
               <div><dt>${t("spectrum")}</dt><dd>${escapeHtml(entry.spectralClass || "—")}</dd></div>
@@ -1122,11 +1119,11 @@
     const image = entry.images?.[0];
     return `
       <article class="planet-gallery-card">
-        <a href="${escapeHtml(planetHref(entry.id))}" aria-label="${t("openPlanet")} #${entry.number} ${escapeHtml(entryName(entry))}">
+        <a href="${escapeHtml(planetHref(entry.id))}" aria-label="${t("openPlanet")} ${catalogNumber(entry.number)} ${escapeHtml(entryName(entry))}">
           <figure class="planet-gallery-media">
             ${image ? `<img src="${escapeHtml(imageUrl(image))}" alt="${escapeHtml(entryName(entry))}" ${image.width && image.height ? `width="${image.width}" height="${image.height}"` : ""} loading="lazy" decoding="async">` : ""}
           </figure>
-          <div class="planet-gallery-caption" lang="${languageAttribute()}"><span>${escapeHtml(entryName(entry))}</span><small>#${entry.number}</small></div>
+          <div class="planet-gallery-caption" lang="${languageAttribute()}"><span>${escapeHtml(entryName(entry))}</span><small>${catalogNumber(entry.number)}</small></div>
           <p class="planet-gallery-subtitle">${escapeHtml(displayDate(entry.date))}</p>
         </a>
       </article>
@@ -1162,8 +1159,8 @@
 
   function listRowMarkup(entry) {
     return `
-      <a class="planet-table-row" href="${escapeHtml(planetHref(entry.id))}" role="row" aria-label="${t("openPlanet")} #${entry.number} ${escapeHtml(entryName(entry))}">
-        <span class="planet-table-number" role="cell">#${entry.number}</span>
+      <a class="planet-table-row" href="${escapeHtml(planetHref(entry.id))}" role="row" aria-label="${t("openPlanet")} ${catalogNumber(entry.number)} ${escapeHtml(entryName(entry))}">
+        <span class="planet-table-number" role="cell">${catalogNumber(entry.number)}</span>
         <span class="planet-table-name" role="cell" lang="${languageAttribute()}">${escapeHtml(entryName(entry))}</span>
         <span class="planet-table-date" role="cell">${escapeHtml(displayDate(entry.date))}</span>
         <span class="planet-table-arm" role="cell">${escapeHtml(definitionLabel("arms", entry.armId, state.language))}</span>
@@ -1195,7 +1192,10 @@
   function renderToday() {
     const feature = todayFeature();
     nodes.today.innerHTML = feature ? todayMarkup(feature) : `<p class="planet-empty">${t("notFound")}</p>`;
-    if (feature) dispatchMedia(nodes.today);
+    if (feature) {
+      dispatchMedia(nodes.today);
+      hydratePlanetLike(feature.entry);
+    }
   }
 
   function renderFocusedDetail(entry) {
@@ -1604,7 +1604,7 @@
       const point = mapPoint(entry);
       const scale = entry.habitability === "A" ? 1.05 : entry.habitability === "B" ? 0.9 : entry.habitability === "C" ? 0.72 : 0.58;
       return `
-        <g class="planet-map-node" data-map-node="${entry.id}" transform="translate(${point.x.toFixed(1)} ${point.y.toFixed(1)})" tabindex="0" role="button" aria-label="#${entry.number} ${escapeHtml(entryName(entry))}">
+        <g class="planet-map-node" data-map-node="${entry.id}" transform="translate(${point.x.toFixed(1)} ${point.y.toFixed(1)})" tabindex="0" role="button" aria-label="${catalogNumber(entry.number)} ${escapeHtml(entryName(entry))}">
           <circle class="planet-map-node-hit" r="16"></circle>
           <circle class="planet-map-node-ring" r="7"></circle>
           <path class="planet-map-node-marker" transform="scale(${scale})" d="M 0 -5 L 1.12 -1.55 L 4.76 -1.55 L 1.82 0.59 L 2.94 4.05 L 0 1.91 L -2.94 4.05 L -1.82 0.59 L -4.76 -1.55 L -1.12 -1.55 Z"></path>
@@ -1685,7 +1685,7 @@
         <div class="planet-map-selection-related-list">
           ${related.map((item) => `
             <button type="button" data-map-related="${escapeHtml(item.id)}">
-              <span>#${item.number}</span>
+              <span>${catalogNumber(item.number)}</span>
               <span>
                 <strong lang="${languageAttribute()}">${escapeHtml(entryName(item))}</strong>
                 <small>${escapeHtml(definitionLabel("systems", item.systemId, state.language))}</small>
@@ -1703,10 +1703,9 @@
       <button class="planet-map-selection-close" type="button" data-map-selection-close aria-label="${escapeHtml(t("closePanel"))}" title="${escapeHtml(t("closePanel"))}">×</button>
       ${image ? `<div class="planet-map-selection-media"><img src="${escapeHtml(imageUrl(image))}" alt="${escapeHtml(entryName(entry))}" loading="lazy" decoding="async"></div>` : ""}
       <div class="planet-map-selection-copy" lang="${languageAttribute()}">
-        <p class="planet-map-selection-kicker">#${entry.number} · ${escapeHtml(definitionLabel("systems", entry.systemId, state.language))}</p>
+        <p class="planet-map-selection-kicker">${catalogNumber(entry.number)} · ${escapeHtml(definitionLabel("systems", entry.systemId, state.language))}</p>
         <h2><a href="${escapeHtml(planetHref(entry.id))}">${escapeHtml(entryName(entry))}</a></h2>
         <div class="planet-map-selection-story">
-          <p class="planet-map-selection-story-label">${t("story")}</p>
           <p>${escapeHtml(story)}</p>
         </div>
         <dl class="planet-map-selection-facts">
@@ -1959,7 +1958,7 @@
     const rect = nodes.mapStage.getBoundingClientRect();
     nodes.mapTooltip.hidden = false;
     nodes.mapTooltip.innerHTML = `
-      <strong lang="${languageAttribute()}">#${entry.number} ${escapeHtml(entryName(entry))}</strong>
+      <strong lang="${languageAttribute()}">${catalogNumber(entry.number)} ${escapeHtml(entryName(entry))}</strong>
       <span>${escapeHtml(definitionLabel("systems", entry.systemId, state.language))} · ${escapeHtml(entry.habitability || "—")}</span>
     `;
     const left = Math.min(clientX - rect.left + 12, rect.width - nodes.mapTooltip.offsetWidth - 8);
@@ -2069,7 +2068,12 @@
     button.setAttribute("aria-label", actionLabel);
     button.setAttribute("title", actionLabel);
     const countNode = button.querySelector("[data-planet-like-count]");
-    if (countNode) countNode.textContent = Number.isFinite(count) ? formatLikeCount(count) : "—";
+    const hasCount = Number.isFinite(count) && count > 0;
+    button.classList.toggle("has-count", hasCount);
+    if (countNode) {
+      countNode.hidden = !hasCount;
+      countNode.textContent = hasCount ? formatLikeCount(count) : "";
+    }
   }
 
   function syncPlanetLikeButtons(entry) {

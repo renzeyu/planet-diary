@@ -75,6 +75,7 @@ body.planet-diary-template {
 .planet-focus-nav > span {
   color: var(--muted);
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
   text-align: right;
 }
 
@@ -138,8 +139,7 @@ body.planet-diary-template {
   min-width: 0;
 }
 
-.planet-record-kicker,
-.planet-record-label {
+.planet-record-kicker {
   margin: 0;
   color: var(--muted);
   font-size: 0.75rem;
@@ -255,8 +255,15 @@ body.planet-diary-template {
 }
 
 .planet-record-like {
-  width: 4rem;
+  width: 2.15rem;
+  padding: 0;
   justify-content: center;
+}
+
+.planet-record-like.has-count {
+  width: auto;
+  min-width: 4rem;
+  padding: 0.38rem 0.65rem;
 }
 
 .planet-record-share {
@@ -848,6 +855,7 @@ body.planet-diary-template {
   color: var(--muted);
   font-size: 0.38em;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
   line-height: 1;
 }
 
@@ -1008,6 +1016,7 @@ body.planet-diary-template {
   color: var(--muted);
   font-size: 0.82rem;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
 }
 
 .planet-gallery-subtitle {
@@ -1098,6 +1107,7 @@ a.planet-table-row:focus-visible {
 .planet-table-number {
   grid-column: 1 / 2;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
 }
 
 .planet-table-name {
@@ -1675,6 +1685,7 @@ a.planet-table-row:focus-visible {
 
 .planet-map-selection-copy h2 {
   margin: 0.35rem 0 0.8rem;
+  color: var(--chart-ink);
   font-size: 2.1rem;
   line-height: 0.96;
 }
@@ -1697,14 +1708,6 @@ a.planet-table-row:focus-visible {
 
 .planet-map-selection-story {
   margin-top: 1rem;
-}
-
-.planet-map-selection-story .planet-map-selection-story-label {
-  margin-bottom: 0.35rem;
-  color: var(--chart-muted);
-  font-size: 0.7rem;
-  line-height: 1.15;
-  text-transform: uppercase;
 }
 
 .planet-map-selection-story p:last-child {
@@ -1990,7 +1993,7 @@ a.planet-table-row:focus-visible {
   }
 
   .planet-record-hero-story {
-    order: 2;
+    order: 3;
     padding-top: 1rem;
   }
 
@@ -2001,7 +2004,7 @@ a.planet-table-row:focus-visible {
   }
 
   .planet-record-plate {
-    order: 3;
+    order: 2;
     margin-top: 0.75rem;
   }
 
