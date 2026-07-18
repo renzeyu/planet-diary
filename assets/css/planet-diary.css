@@ -189,7 +189,7 @@ body.planet-diary-template {
 
 .planet-record-hero-story-text {
   max-width: 31rem;
-  margin: 0.75rem 0 0;
+  margin: 0;
   color: var(--ink);
   font-family: var(--planet-serif);
   font-size: 1.32rem;
@@ -1980,7 +1980,7 @@ a.planet-table-row:focus-visible {
 
   .planet-record-hero-story {
     order: 3;
-    padding-top: 1rem;
+    padding-top: 0;
   }
 
   .planet-record-hero-story-text {
@@ -2038,31 +2038,27 @@ a.planet-table-row:focus-visible {
 
   .planet-catalog-tools {
     grid-column: 1 / 5;
-    display: flex;
-    justify-content: flex-end;
+    display: block;
+    width: 100%;
     padding-top: 0.1rem;
   }
 
   .planet-primary-nav {
     display: flex;
-    gap: clamp(0.32rem, 1.8vw, 0.65rem);
+    gap: 0;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     width: 100%;
     white-space: nowrap;
   }
 
   .planet-view-tabs {
-    display: flex;
-    gap: clamp(0.24rem, 1.55vw, 0.55rem);
-    justify-content: flex-end;
-    min-width: 0;
+    display: contents;
     font-size: clamp(0.66rem, 2.7vw, 0.8rem);
   }
 
   .planet-primary-nav > .planet-language-switch {
-    gap: clamp(0.18rem, 0.9vw, 0.35rem);
-    flex: 0 0 auto;
+    display: contents;
     font-size: clamp(0.64rem, 2.45vw, 0.72rem);
   }
 
