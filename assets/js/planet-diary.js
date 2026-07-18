@@ -360,7 +360,8 @@
     drag: null,
     pointers: new Map(),
     pinch: null,
-    suppressCanvasClick: false
+    suppressCanvasClick: false,
+    fallbackFullscreen: false
   };
   let searchTimer;
   let backToTopFrame;
@@ -1848,28 +1849,56 @@
   }
 
   function mapIsFullscreen() {
-    return document.fullscreenElement === nodes.mapFrame;
+    const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
+    return fullscreenElement === nodes.mapFrame || mapState.fallbackFullscreen;
+  }
+
+  function setMapFallbackFullscreen(active) {
+    mapState.fallbackFullscreen = Boolean(active);
+    syncFullscreenButton();
+    syncMapViewportMode();
   }
 
   function syncFullscreenButton() {
     if (!nodes.mapFullscreen) return;
-    const supported = Boolean(nodes.mapFrame?.requestFullscreen && document.exitFullscreen);
-    nodes.mapFullscreen.hidden = !supported;
-    if (!supported) return;
-    const label = t(mapIsFullscreen() ? "exitFullscreen" : "enterFullscreen");
+    const isFullscreen = mapIsFullscreen();
+    const label = t(isFullscreen ? "exitFullscreen" : "enterFullscreen");
+    nodes.mapFullscreen.hidden = false;
     nodes.mapFullscreen.title = label;
     nodes.mapFullscreen.setAttribute("aria-label", label);
-    nodes.mapFullscreen.setAttribute("aria-pressed", String(mapIsFullscreen()));
-    nodes.mapFrame.classList.toggle("is-fullscreen", mapIsFullscreen());
+    nodes.mapFullscreen.setAttribute("aria-pressed", String(isFullscreen));
+    nodes.mapFrame.classList.toggle("is-fullscreen", isFullscreen);
+    nodes.mapFrame.classList.toggle("is-fallback-fullscreen", mapState.fallbackFullscreen);
+    document.body.classList.toggle("planet-map-fullscreen-active", mapState.fallbackFullscreen);
   }
 
   async function toggleMapFullscreen() {
-    if (!nodes.mapFrame?.requestFullscreen) return;
+    if (mapState.fallbackFullscreen) {
+      setMapFallbackFullscreen(false);
+      return;
+    }
+
+    const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
+    const exitFullscreen = document.exitFullscreen || document.webkitExitFullscreen;
+    if (fullscreenElement === nodes.mapFrame && exitFullscreen) {
+      try {
+        await exitFullscreen.call(document);
+      } catch (_) {
+        syncFullscreenButton();
+      }
+      return;
+    }
+
+    const requestFullscreen = nodes.mapFrame?.requestFullscreen || nodes.mapFrame?.webkitRequestFullscreen;
+    if (!requestFullscreen) {
+      setMapFallbackFullscreen(true);
+      return;
+    }
+
     try {
-      if (mapIsFullscreen()) await document.exitFullscreen();
-      else await nodes.mapFrame.requestFullscreen();
+      await requestFullscreen.call(nodes.mapFrame);
     } catch (_) {
-      // Fullscreen can be denied by browser or embedding policy without affecting the map.
+      setMapFallbackFullscreen(true);
     }
   }
 
@@ -2476,12 +2505,18 @@
     });
     nodes.mapFullscreen?.addEventListener("click", toggleMapFullscreen);
     nodes.mapTheme?.addEventListener("click", toggleMapTheme);
-    document.addEventListener("fullscreenchange", () => {
+    const handleFullscreenChange = () => {
       syncFullscreenButton();
       syncMapViewportMode();
-    });
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
     document.addEventListener("keydown", (event) => {
       if (event.key !== "Escape") return;
+      if (mapState.fallbackFullscreen) {
+        setMapFallbackFullscreen(false);
+        return;
+      }
       if (state.filtersOpen) {
         setFiltersOpen(false, { restoreFocus: true });
         return;

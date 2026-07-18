@@ -781,13 +781,17 @@ body.planet-diary-template {
   white-space: nowrap;
 }
 
-.planet-today-record-plate figcaption {
-  letter-spacing: 0;
+.planet-today-companions {
+  padding: 1.5rem 0 0;
+  border-top: 1px solid var(--line);
 }
 
-.planet-today-companions {
-  padding: 1.5rem 0 2rem;
-  border-top: 1px solid var(--line);
+.planet-catalog.is-today-view + .site-footer {
+  margin-top: 0;
+}
+
+.planet-catalog.is-today-view {
+  padding-bottom: 0;
 }
 
 .planet-today-companions-header {
@@ -1264,21 +1268,35 @@ a.planet-table-row:focus-visible {
   color-scheme: dark;
 }
 
-.planet-map-frame:fullscreen {
+.planet-map-frame:fullscreen,
+.planet-map-frame.is-fullscreen {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   background: var(--chart-paper);
 }
 
-.planet-map-frame:fullscreen .planet-map-toolbar {
+.planet-map-frame.is-fallback-fullscreen {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+}
+
+body.planet-map-fullscreen-active {
+  overflow: hidden;
+}
+
+.planet-map-frame:fullscreen .planet-map-toolbar,
+.planet-map-frame.is-fullscreen .planet-map-toolbar {
   padding: 0.65rem 1rem;
   border-bottom: 1px solid var(--chart-line);
   background: var(--chart-frame);
 }
 
-.planet-map-frame:fullscreen .planet-map-stage {
+.planet-map-frame:fullscreen .planet-map-stage,
+.planet-map-frame.is-fullscreen .planet-map-stage {
   height: 100%;
   min-height: 0;
   aspect-ratio: auto;
@@ -2184,6 +2202,7 @@ a.planet-table-row:focus-visible {
   .planet-detail-meta h2 {
     order: 1;
     grid-column: 1 / -1;
+    margin-bottom: 0;
   }
 
   .planet-name-zh {
@@ -2282,18 +2301,23 @@ a.planet-table-row:focus-visible {
   }
 
   .planet-map-zoom .planet-map-theme-toggle {
-    width: 56px;
+    width: 76px;
+    padding: 0 7px;
   }
 
   .planet-map-theme-toggle::before {
-    top: 10px;
-    left: 6px;
-    width: 24px;
-    height: 24px;
+    top: 8px;
+    left: 7px;
+    width: 28px;
+    height: 28px;
   }
 
   .planet-map-theme-toggle[aria-pressed="true"]::before {
-    transform: translateX(20px);
+    transform: translateX(34px);
+  }
+
+  .planet-map-theme-toggle span {
+    font-size: 0.95rem;
   }
 
   .planet-map-stage {
