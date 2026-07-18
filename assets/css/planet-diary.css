@@ -371,20 +371,6 @@ body.planet-diary-template {
   cursor: default;
 }
 
-.planet-record-plate figcaption {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--gap);
-  padding-top: 0.65rem;
-  color: var(--muted);
-  font-size: 0.76rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.planet-record-plate figcaption span:last-child {
-  text-align: right;
-}
-
 .planet-record-section {
   padding: 2rem 0 2.5rem;
   border-bottom: 1px solid var(--line);
@@ -2010,15 +1996,6 @@ a.planet-table-row:focus-visible {
 
   .planet-record-plate-images.is-multiple {
     grid-template-columns: 1fr;
-  }
-
-  .planet-record-plate figcaption {
-    grid-template-columns: 1fr;
-    gap: 0.2rem;
-  }
-
-  .planet-record-plate figcaption span:last-child {
-    text-align: left;
   }
 
   .planet-record-key-facts {

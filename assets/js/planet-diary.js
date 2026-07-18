@@ -222,7 +222,6 @@
       themes: "Themes",
       synopsis: "Synopsis",
       undated: "Undated",
-      plate: "Plate",
       planetActions: "Planet actions",
       like: "Like",
       liked: "Liked",
@@ -326,7 +325,6 @@
       themes: "主题",
       synopsis: "简介",
       undated: "日期不详",
-      plate: "图版",
       planetActions: "星球操作",
       like: "喜欢",
       liked: "已喜欢",
@@ -902,10 +900,6 @@
             >
           `).join("")}
         </div>
-        <figcaption>
-          <span>${t("plate")} ${catalogNumber(entry.number)}</span>
-          <span>${escapeHtml(displayDate(entry.date))}</span>
-        </figcaption>
       </figure>
     `;
   }
@@ -1010,9 +1004,6 @@
                 >
               `).join("")}
             </div>
-            <figcaption>
-              <span>${escapeHtml(displayDate(entry.date))}</span>
-            </figcaption>
           </figure>
         </section>
       </article>
