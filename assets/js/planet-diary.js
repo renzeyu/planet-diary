@@ -143,6 +143,7 @@
       worlds: "worlds",
       catalogControls: "Planet Diary controls",
       viewAs: "View Planet Diary as",
+      switchLanguage: "Switch to Chinese",
       today: "Today",
       cards: "Cards",
       todayFeature: "On This Day",
@@ -246,6 +247,7 @@
       worlds: "个世界",
       catalogControls: "星球日记浏览工具",
       viewAs: "星球日记视图",
+      switchLanguage: "切换至英文",
       today: "今日",
       cards: "卡片",
       todayFeature: "今日星球",
@@ -715,11 +717,9 @@
     root.querySelectorAll("[data-i18n-aria]").forEach((node) => {
       node.setAttribute("aria-label", t(node.dataset.i18nAria));
     });
-    root.querySelectorAll("[data-planet-language]").forEach((button) => {
-      button.setAttribute("aria-pressed", String(button.dataset.planetLanguage === state.language));
-    });
-    root.querySelectorAll("[data-planet-language-switch]").forEach((switcher) => {
-      switcher.setAttribute("aria-label", state.language === "zh" ? "语言" : "Language");
+    root.querySelectorAll("[data-planet-language-toggle]").forEach((button) => {
+      button.setAttribute("aria-label", t("switchLanguage"));
+      button.setAttribute("title", t("switchLanguage"));
     });
 
     nodes.year.setAttribute("aria-label", state.language === "zh" ? "按年份筛选" : "Filter by year");
@@ -2270,8 +2270,8 @@
       if (shareButton) sharePlanet(shareButton);
     });
 
-    root.querySelectorAll("[data-planet-language]").forEach((button) => {
-      button.addEventListener("click", () => setLanguage(button.dataset.planetLanguage));
+    root.querySelectorAll("[data-planet-language-toggle]").forEach((button) => {
+      button.addEventListener("click", () => setLanguage(state.language === "en" ? "zh" : "en"));
     });
 
     root.querySelectorAll("[data-planet-view]").forEach((button) => {

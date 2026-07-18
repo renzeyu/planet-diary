@@ -80,34 +80,41 @@ body.planet-diary-template {
 }
 
 .planet-language-switch {
-  display: inline-grid;
-  grid-template-columns: repeat(2, auto);
-  gap: 0.65rem;
-  align-items: baseline;
+  display: inline-flex;
+  align-items: center;
   width: max-content;
   color: var(--muted);
-  font-size: 0.78rem;
-  line-height: 1.2;
+  line-height: 1;
 }
 
-.planet-language-switch button {
+.planet-language-toggle {
+  display: grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  place-items: center;
   border: 0;
-  border-bottom: 1px solid transparent;
-  padding: 0 0 0.12rem;
+  padding: 0;
   background: transparent;
   color: inherit;
-  font: inherit;
   cursor: pointer;
 }
 
-.planet-language-switch button:hover,
-.planet-language-switch button:focus-visible,
-.planet-language-switch button[aria-pressed="true"] {
+.planet-language-toggle:hover,
+.planet-language-toggle:focus-visible {
   color: var(--ink);
 }
 
-.planet-language-switch button[aria-pressed="true"] {
-  border-bottom-color: currentColor;
+.planet-language-toggle:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
+}
+
+.planet-language-icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  background: currentColor;
+  -webkit-mask: url("../icons/language.svg") center / contain no-repeat;
+  mask: url("../icons/language.svg") center / contain no-repeat;
 }
 
 .planet-catalog.is-planet-focused .planet-load-more {
@@ -1874,11 +1881,6 @@ a.planet-table-row:focus-visible {
     font-size: 0.82rem;
   }
 
-  .planet-language-switch {
-    gap: 0.42rem;
-    font-size: 0.72rem;
-  }
-
   .planet-filter-toggle {
     width: 1.55rem;
     height: 1.55rem;
@@ -2054,12 +2056,16 @@ a.planet-table-row:focus-visible {
 
   .planet-view-tabs {
     display: contents;
-    font-size: clamp(0.66rem, 2.7vw, 0.8rem);
+    font-size: 1rem;
   }
 
   .planet-primary-nav > .planet-language-switch {
     display: contents;
-    font-size: clamp(0.64rem, 2.45vw, 0.72rem);
+  }
+
+  .planet-primary-nav .planet-language-toggle {
+    width: clamp(1.2rem, 5vw, 1.5rem);
+    height: clamp(1.2rem, 5vw, 1.5rem);
   }
 
   .planet-primary-nav > .planet-filter-toggle {

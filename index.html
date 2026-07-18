@@ -34,9 +34,10 @@
               <button type="button" role="tab" aria-selected="false" aria-controls="planet-map-view" data-planet-view="map" data-i18n="starMap">Star Map</button>
               <button type="button" role="tab" aria-selected="false" aria-controls="planet-about-view" data-planet-view="about" data-i18n="about">About</button>
             </div>
-            <div class="planet-language-switch" data-planet-language-switch role="group" aria-label="Language">
-              <button type="button" data-planet-language="en" aria-pressed="true">EN</button>
-              <button type="button" data-planet-language="zh" aria-pressed="false" lang="zh-Hans">中文</button>
+            <div class="planet-language-switch">
+              <button class="planet-language-toggle" type="button" data-planet-language-toggle aria-label="Switch to Chinese" title="Switch to Chinese">
+                <span class="planet-language-icon" aria-hidden="true"></span>
+              </button>
             </div>
             <button class="planet-filter-toggle" type="button" data-planet-filter-toggle aria-expanded="false" aria-controls="planet-filter-panel">
               <span class="planet-filter-icon" aria-hidden="true"></span>
